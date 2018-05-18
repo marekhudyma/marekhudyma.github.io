@@ -1,1 +1,21 @@
 remote_theme: jekyll/minima
+
+title: Marek's page
+author: marekhudyma
+description: > # this means to ignore newlines until "twitter_username:"
+  The best developer ever. 
+  
+# social links
+github_username:  marekhudyma
+rss: rss
+
+show_excerpts: false # set to true to show excerpts on the homepage
+
+# Minima date format
+# refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
+minima:
+  date_format: "%Y-%M-%-d" 
+
+plugins:
+ - jekyll-feed
+ - jekyll-seo-tag
