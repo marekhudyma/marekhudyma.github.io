@@ -60,6 +60,7 @@ $$ LANGUAGE sql IMMUTABLE;
 ```
 The invocation will look like that: 
 ```
-EXPLAIN SELECT * FROM transactions WHERE created < immutable_now(uuid_generate_v4());
+EXPLAIN SELECT * FROM transactions 
+WHERE created < immutable_now(uuid_generate_v4());
 ```
 
