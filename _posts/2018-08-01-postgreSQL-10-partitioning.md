@@ -71,7 +71,7 @@ FROM ('2016-01-01 00:00:00') TO ('2017-01-01 00:00:00');
 # repeat for each partition table. 
 ```
 
-3. Create an index on the key column(s) in each partition.
+3. Create foreign keys on column(s) in each partition.
 ```
 ALTER TABLE ONLY transactions_2015 ADD CONSTRAINT 
 transactions_2015_account_id_fkey FOREIGN KEY (account_id) 
@@ -82,7 +82,7 @@ transactions_2016_account_id_fkey FOREIGN KEY (account_id)
 REFERENCES accounts(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
 # repeat for each partition table. 
 ```
-4. Create foreign keys on column(s) in each partition.
+4. Create an index on the key column(s) in each partition.
 ```
 CREATE INDEX ON transactions_2015 (account_id);
 CREATE INDEX ON transactions_2016 (account_id);
