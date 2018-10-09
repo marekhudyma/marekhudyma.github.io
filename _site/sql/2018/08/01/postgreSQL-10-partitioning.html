@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>PostgreSQL 10 table partitioning | Marek Hudyma’s blog</title>
+<meta name="generator" content="Jekyll v3.8.4" />
+<meta property="og:title" content="PostgreSQL 10 table partitioning" />
+<meta name="author" content="Marek Hudyma" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="In this article, you will find information on: What is partitioning How to implement partitioning Which problems I found using PostgreSQL 10 table partitioning." />
+<meta property="og:description" content="In this article, you will find information on: What is partitioning How to implement partitioning Which problems I found using PostgreSQL 10 table partitioning." />
+<link rel="canonical" href="http://localhost:4000/sql/2018/08/01/postgreSQL-10-partitioning.html" />
+<meta property="og:url" content="http://localhost:4000/sql/2018/08/01/postgreSQL-10-partitioning.html" />
+<meta property="og:site_name" content="Marek Hudyma’s blog" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-01T00:00:00+02:00" />
+<script type="application/ld+json">
+{"description":"In this article, you will find information on: What is partitioning How to implement partitioning Which problems I found using PostgreSQL 10 table partitioning.","author":{"@type":"Person","name":"Marek Hudyma"},"@type":"BlogPosting","url":"http://localhost:4000/sql/2018/08/01/postgreSQL-10-partitioning.html","headline":"PostgreSQL 10 table partitioning","dateModified":"2018-08-01T00:00:00+02:00","datePublished":"2018-08-01T00:00:00+02:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/sql/2018/08/01/postgreSQL-10-partitioning.html"},"@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Marek Hudyma's blog" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Marek Hudyma&#39;s blog</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">PostgreSQL 10 table partitioning</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2018-08-01T00:00:00+02:00" itemprop="datePublished">2018-08-01
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p>In this article, you will find information on:</p>
+<ul>
+  <li>What is partitioning</li>
+  <li>How to implement partitioning</li>
+  <li>Which problems I found using PostgreSQL 10 table partitioning.</li>
+</ul>
+
+<p>Example of the working Java/SQL code you can find <a href="https://github.com/marekhudyma/partitioning">here</a>.</p>
+
+<h2 id="overview">Overview</h2>
+<p>Table partitioning refers to splitting what is logically one large table into smaller physical pieces.</p>
+
+<h2 id="methods-of-partitioning">Methods of partitioning</h2>
+<p>There are two methods of data partitioning:</p>
+<ul>
+  <li><strong>Horizontal partitioning</strong> (involves putting different rows into different tables) - <strong>covered in this article</strong>.</li>
+</ul>
+<figure>
+  <img src="/assets/2018-08-01-postgreSQL-10-partitioning/horizontal.png" alt="Horizontal partitioning" /> 
+  <figcaption>Horizontal partitioning</figcaption>
+</figure>
+
+<ul>
+  <li><strong>Vertical partitioning</strong> (involves creating tables with fewer columns and using additional tables to store the remaining columns) - <strong>not covered in this article</strong>.</li>
+</ul>
+<figure>
+  <img src="/assets/2018-08-01-postgreSQL-10-partitioning/vertical.png" alt="Vertical partitioning" /> 
+  <figcaption>Vertical partitioning</figcaption>
+</figure>
+
+<h2 id="benefits-of-partitioning">Benefits of partitioning</h2>
+
+<ul>
+  <li>Your SQL search and update query <strong>performance</strong> can be improved dramatically (smaller table needs to be scanned,  smaller index needs to be rebuilt).</li>
+  <li><strong>Bulk</strong> loads and deletes can be accomplished by adding or removing partitions.</li>
+  <li><strong>Seldom-used data</strong> can be migrated to cheaper and slower storage media.</li>
+  <li>For frequently-used data, you can create <strong>sub-partitions</strong> or composite partitions.</li>
+</ul>
+
+<h2 id="types-of-horizontal-partitioning">Types of horizontal partitioning</h2>
+<p>There are two built-in partitioning types:</p>
+<ul>
+  <li><strong>Range partitioning</strong> - The table is partitioned into “ranges” defined by a key column or set of columns, with no overlap between the ranges of values assigned to different partitions. For example, one might partition by date ranges or by ranges of identifiers for particular business objects.</li>
+  <li>List <strong>Partitioning</strong> - The table is partitioned by explicitly listing which key values appear in each partition.</li>
+</ul>
+
+<h2 id="postgresql-9-vs-postgresql-10-partitioning">PostgreSQL 9 vs PostgreSQL 10 partitioning</h2>
+<p>Partitioning in PostgreSQL 9 was a nice improvement. Unfortunately, for Hibernate developers, it couldn’t be transparent. It required triggers that would put a row in the proper partition table. The problem was that it didn’t return the id of the inserted row and it couldn’t be mapped by Hibernate in a standard query. 
+PostgreSQL 9 solution is faster than PostgreSQL 10 partitioning, but less convenient.</p>
+
+<h2 id="implementing-partitions">Implementing Partitions</h2>
+<ol>
+  <li>Create the “master” table.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-- sequence will allow keeping the order of rows in all tables
+CREATE SEQUENCE global_sequence START WITH 1 INCREMENT BY 10 
+NO MINVALUE NO MAXVALUE CACHE 1;
+#
+CREATE TABLE transactions (
+ sequence   BIGINT DEFAULT nextval('global_sequence'::regclass) NOT NULL,
+ -- default value on created and updated so you can skip trigger for it
+ created    TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp(),
+ updated    TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp(),
+ account_id UUID NOT NULL,
+ amount     NUMERIC NOT NULL
+) PARTITION BY RANGE (created);
+</code></pre></div>    </div>
+  </li>
+  <li>Create partitions.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE transactions_2015 PARTITION OF transactions FOR VALUES 
+FROM ('2015-01-01 00:00:00') TO ('2016-01-01 00:00:00');
+#
+CREATE TABLE transactions_2016 PARTITION OF transactions FOR VALUES 
+FROM ('2016-01-01 00:00:00') TO ('2017-01-01 00:00:00');
+# repeat for each partition table. 
+</code></pre></div>    </div>
+  </li>
+  <li>Create foreign keys on column(s) in each partition.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ALTER TABLE ONLY transactions_2015 ADD CONSTRAINT 
+transactions_2015_account_id_fkey FOREIGN KEY (account_id) 
+REFERENCES accounts(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+#
+ALTER TABLE ONLY transactions_2016 ADD CONSTRAINT 
+transactions_2016_account_id_fkey FOREIGN KEY (account_id) 
+REFERENCES accounts(id) ON UPDATE RESTRICT ON DELETE RESTRICT;
+# repeat for each partition table. 
+</code></pre></div>    </div>
+  </li>
+  <li>Create an index on the key column(s) in each partition.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE INDEX ON transactions_2015 (account_id);
+CREATE INDEX ON transactions_2016 (account_id);
+# repeat for each partition table. 
+</code></pre></div>    </div>
+  </li>
+  <li>Create triggers in each partition.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TRIGGER set_updated_trigger BEFORE INSERT OR UPDATE ON 
+transactions_2015 FOR EACH ROW EXECUTE PROCEDURE public.set_updated();
+#
+CREATE TRIGGER set_updated_trigger BEFORE INSERT OR UPDATE ON 
+transactions_2016 FOR EACH ROW EXECUTE PROCEDURE public.set_updated();
+# repeat for each partition table. 
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="partition-limitations-in-postgresql-10">Partition limitations in PostgreSQL 10</h2>
+<p>The main limitations are:</p>
+<ul>
+  <li>No global unique constraint (you can create it only on partition table level, not on master partition level);</li>
+  <li>No global row triggers, indexes;</li>
+  <li>No global primary and foreign keys;</li>
+  <li>No auto-creation of new partitions;</li>
+  <li>No update moves rows across partitions (you need to delete a row from one partition and create it in another);</li>
+  <li>Not possible to turn a regular table into a partitioned table or vice versa.</li>
+</ul>
+
+<h1 id="global-uniqueness">Global Uniqueness</h1>
+<p>Partitioned tables cannot yet be referenced by foreign constraints. This is due to the lack of global indexes (a.k.a. single indexes across all partitions) and has a profound impact on the design of a database: rendering it impossible to ensure global value uniqueness across all partitions, whether on a primary key or on a unique constraint.</p>
+
+<p>Global indexes will be introduced in PostgreSQL 11, and in the meantime, the following three workarounds are the only viable ones:</p>
+<ul>
+  <li>Have a secondary non-partitioned table where the unique constraints are defined and that only contains the columns involved in those constraints.</li>
+  <li>If there are no concurrency concerns, let the application check beforehand for the existence of an entry with the same key before insertion (scan of the table aided by partition routing and proper indexes defined on the single partitions). This works only with isolation <code class="highlighter-rouge">READ COMMITTED</code> level.</li>
+  <li>If there are concurrency concerns and there is a guarantee that uniqueness could only be violated within one account (or user), another table that contains all accounts could be used for locking this particular account with <code class="highlighter-rouge">SELECT FOR UPDATE</code> for the duration of the transaction. This also works only with isolation <code class="highlighter-rouge">READ COMMITTED</code> level. <code class="highlighter-rouge">SELECT FOR UPDATE</code> can’t be normally used on the partitioned table, because the row that needs to be locked may not exist.</li>
+</ul>
+
+<p>Unfortunately, all of these approaches partially invalidate the gains in terms of the performance and scalability introduced by partitioning, but it will at least lay the foundations for a proper design to be improved once PostgreSQL 11 is available.</p>
+
+<h2 id="useful-advice">Useful advice</h2>
+<ul>
+  <li>Do not go overboard with partitioning, only important tables.</li>
+  <li>Do it table by table.</li>
+  <li>Test partitions with integration tests (check whether a row is in a proper partition).</li>
+  <li>The popular idea for partitioning is DATETIME and having BIGINT as a primary key. From a theoretical point of view, it is possible that the last row in the older partition will have a higher primary key than the first row in the newer partition. It is a good idea to add an additional constraint on the partition on the primary key when you stop actively write to partition.</li>
+</ul>
+
+<h2 id="when-to-do-partitioning">When to do partitioning</h2>
+<p>For the question: how many rows should my table contain to partition it?
+I always hear: It <code class="highlighter-rouge">depends</code>. 
+But if I need to give some <code class="highlighter-rouge">magic number</code>, I would say: <code class="highlighter-rouge">10 million in the whole history of the table</code>.</p>
+
+<h2 id="postgresql-11-features">PostgreSQL 11 features</h2>
+<p>PostgreSQL is planned for release in autumn 2018. <a href="https://www.postgresql.org/docs/11/static/release-11.html">Here</a> is a full list of the most important features from a partitioning point of view:</p>
+<ul>
+  <li>Update Moves Rows Across Partitions</li>
+  <li>Unique index on the master table</li>
+  <li>Default Partition table</li>
+  <li>Partition by Hash
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>CREATE TABLE my_table (some_field text) PARTITION BY HASH (some_field);
+CREATE TABLE my_table_0 PARTITION OF my_table 
+FOR VALUES WITH (MODULUS 3, REMAINDER 0);
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="alternative-solutions">Alternative solutions</h2>
+<p>As an alternative to partitioning, you may consider using <a href="https://en.wikipedia.org/wiki/Shard_(database_architecture)">sharding</a> or both: partitioning and sharding.</p>
+
+<h2 id="summary">Summary</h2>
+<p>Partitioning in PostgreSQL 10 allows Java developers (Hibernate users) to easily and transparently map partitioned tables to a Java object. It still has some drawbacks, like repeated code to create indexes, foreign keys, etc. PostgreSQL 11 seems to be a nice improvement. The release cycle of Postgres is speeding up, so the new version will be available soon.</p>
+
+  </div><a class="u-url" href="/sql/2018/08/01/postgreSQL-10-partitioning.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Marek Hudyma&#39;s blog</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Marek Hudyma</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/marekhudyma"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">marekhudyma</span></a></li><li><a href="/feed.xml"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#rss"></use></svg> <span>rss</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
