@@ -11,13 +11,12 @@ In this article, you will find information on:
 <iframe src="//www.slideshare.net/slideshow/embed_code/key/ImUcqZ9yyHPg1H" width="595" height="485" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC; border-width:1px; margin-bottom:5px; max-width: 100%;" allowfullscreen> </iframe> <div style="margin-bottom:5px"> <strong> <a href="//www.slideshare.net/MarekHudyma/integration-tests-with-testcointainers-library" title="Integration tests with testcointainers library. " target="_blank">Integration tests with testcointainers library. </a> </strong> from <strong><a href="https://www.slideshare.net/MarekHudyma" target="_blank">Marek Hudyma</a></strong> </div>
 # Integration testing
 
-Integration testing is the phase in software testing in which individual software modules are combined and tested as a group.
-It occurs after unit testing.
+Integration testing is the phase in software testing in which individual software modules are combined and tested as a group. It occurs after unit testing.
 
 # Introduction to the 
 # FIRST - Principles for Writing Good Tests
 All tests (including integration tests) should follow principles defined as ```FIRST```. 
-Acronym ```FIRST``` stand for below test features:
+Acronym ```FIRST``` stands for below test features below:
 
 * **[F]**ast - A test should not take more than a second to finish the execution
 * **[I]**solated/Independent - No order-of-run dependency. They should pass or fail the same way in suite or when run individually. Do not depend on any external resources.
@@ -30,20 +29,20 @@ Pyramid of testing
   <img src="/assets/2018-12-01-integration-tests-with-testcontainers/pyramid_of_testing.png" alt="Pyramid of testing"> 
   <figcaption>Pyramid of testing</figcaption>
 </figure>
-As you can see in pyramid of testing, number of test should be average - more then manual and system tests, more than component and unit tests.
+As you can see in the pyramid of testing, the number of tests should be average - more than manual and system tests, more than component and unit tests.
 
 # Concept of integration tests with testcontainers.org library
-testcontainers.org  is a Java library that allow to run docker images and control it from Java code.  (I will not cover topic what is Docker, if you need more information <a href="https://en.wikipedia.org/wiki/Docker_(software)">read more</a> about it.)
+testcontainers.org  is a Java library that allows to run docker images and control them from Java code.  (I will not cover topic what is Docker, if you need more information <a href="https://en.wikipedia.org/wiki/Docker_(software)">read more</a> about it.)
 
-The main concept of the proposal of integration test is: 
+The main concept of the proposal of the integration test is: 
 * Run your application 
-* Run ```external components``` as real docker containers. Here is important to understand what do I mean by ```external components```. It can be: 
+* Run ```external components``` as real docker containers. Here it is important to understand what I mean by ```external components```. It can be: 
     * database storage - for example run real PostgreSQL as docker image, 
     * Redis - run real Redis as docker image, 
     * RabbitMQ
-    * AWS components like S3, Kinesis, DynamoDB and other you can emulate by ```localstack``` 
+    * AWS components like S3, Kinesis, DynamoDB and others you can emulate by ```localstack``` 
     
-**Don't run another microservice as docker image**. If you communicate with other microservice via HTTP, mock requests by ```mockserver``` run as docker image. 
+**Don't run another microservice as docker image**. If you communicate with another microservice via HTTP, mock requests by ```mockserver``` run as docker images. 
 
 <figure>
   <img src="/assets/2018-12-01-integration-tests-with-testcontainers/concept.jpg" alt="Concept"> 
@@ -52,8 +51,8 @@ The main concept of the proposal of integration test is:
 
 ## Advantages 
 
-* You run test against real components, for example H2 database doesn't support Postgres/MySQL specific functionality. 
-* You can run your tests offline - no Internet connection needed. It is advantage for people who are traveling or if you have slow Internet connection. 
+* You run tests against real components, for example H2 database doesn't support Postgres/MySQL specific functionality. 
+* You can run your tests offline - no Internet connection needed. It is an advantage for people who are traveling or if you have slow Internet connection. 
 * You can mock AWS services by ```localstack```. It will simplify administrative actions, cut costs and make your build offline.
 * You can test cornercases like: 
     * simulate timeout from external service, 
@@ -61,7 +60,7 @@ The main concept of the proposal of integration test is:
 * All tests are written by developers in the same commit. 
 
 ## Disadvantages
-* Continuous integration (eg Jenkins) machine need to be bigger (build uses more RAM and CPU).
+* Continuous integration (e.g. Jenkins) machine needs to be bigger (build uses more RAM and CPU).
 * You need to run containers at least once - it consumes time and resources.
 
 # How to run Integration Tests
@@ -73,7 +72,7 @@ protected static PostgreSQLContainer postgreSQLContainer = new PostgreSQLContain
         .withPassword("password")
         .withDatabaseName("experimentDB");
 ```
-Than run database migration scripts (eg. Flyway). Even empty test will validate if your migrations are executed properly.
+Then run database migration scripts (eg. Flyway). Even empty test will validate if your migrations are executed properly.
 As a good practice, you should remember about cleaning the state - delete inserted rows.
 
 ## Example of DB IntegrationTest
@@ -104,14 +103,14 @@ To run RabbitMQ add it to the test:
     private static GenericContainer rabbitMqContainer =
         new GenericContainer("rabbitmq:3.7.7").withExposedPorts(5672);
 ```
-Testing queues is more tricky, because it is asynchronous. You don't know how much time you need to consume message after putting it to the queue. 
+Testing queues is more tricky, because it is asynchronous. You don't know how much time you need to consume a message after putting it to the queue. 
 
-* If your production code receive the message, in the test put it in the queue. Then wait for consumption of the message and validate if changes made by consumption are what you expect. 
-You can use <a href="https://github.com/awaitility/awaitility">Awaitility</a> library to validate results of test.
+* If your production code receives the message, in the test put it in the queue. Then wait for consumption of the message and validate if changes made by consumption are what you expect. 
+You can use <a href="https://github.com/awaitility/awaitility">Awaitility</a> library to validate results of the test.
 * If your production code sends a message, create a testConsumer in test scope and validate if you receive proper messages.
 
 
-**Always clean the queue after the test.** Every send message should be consumed. If you don't do it, your build can became unpredictable. 
+**Always clean the queue after the test.** Every sent message should be consumed. If you don't do it, your build can became unpredictable. 
 
 
 ## Testing external HTTP calls REST / SOAP
@@ -156,7 +155,7 @@ You can mock interaction with AWS with localstack. Right now localstack supports
 
 # How to start working with testcointainers library
 
-One way of creating tests is extending abstract test class like example below. 
+One way of creating tests is extending abstract test class like the example below. 
 It contains static references to docker containers. In `static` block, we start all images. 
 ```
 @ExtendWith(SpringExtension.class)
@@ -183,14 +182,14 @@ You don’t need to release any resources, there is: [Runtime.getRuntime().addSh
 There is a [ryuk docker image](https://quay.io/repository/testcontainers/ryuk?tag=latest&tab=tags) that does it.
 
 # Eureka
-For service discovery I am using Eureka. At the beginning I was running Eureka as docker image in my integration tests.
-To save resources on CI I decided to switched it off: 
+For service discovery I am using Eureka. At the beginning I was running Eureka as a docker image in my integration tests.
+To save resources on CI I decided to switch it off: 
 ```
 eureka:
   client:
     enabled: false
 ```
-Than I mocked the addresses of external services, by setting system properties:
+Then I mocked the addresses of external services, by setting system properties:
 ```
 new ImmutableMap.Builder<String, String>()
    .put("commonsscriptsync.ribbon.listOfServers", format("localhost:%d", mockserverPort))
@@ -200,7 +199,7 @@ new ImmutableMap.Builder<String, String>()
 
 # Cloud Auth
 My microservices are using Cloud Auth for authorization.
-To save resources on CI I decided to switched it off. I mocked the Cloud Auth by MockServer - hardcoded JWT token - valid for everything and forever.
+To save resources on CI I decided to switch it off. I mocked the Cloud Auth by MockServer - hardcoded JWT token - valid for everything and forever.
 ```
 requestAuth = request()
                 .withPath("/oauth/token")
@@ -213,11 +212,11 @@ getMockServerContainerClient()
 ```
 
 # Disadvantages of testcontainer library
-TestContainers supports docker_compose file, but only version 2.0, while docker_compose current version is 3.6.
+TestContainers support docker_compose file, but only version 2.0; while the docker_compose current version is 3.6.
 
 # Alternative solutions
 I liked TestContainers library. Personally I find `http://testcompose.com` library more interesting.
-Main advantage is that it simply runs docker_compose file and reduce boilerplate code.
+The main advantage is that it simply runs docker_compose file and reduces boilerplate code.
 
 # Code example
 You can find examples of usages in my github project: `https://github.com/marekhudyma/testcontainers/`
