@@ -17,28 +17,26 @@ It occurs after unit testing.
 # Introduction to the 
 # FIRST - Principles for Writing Good Tests
 All tests (including integration tests) should follow principles defined as ```FIRST```. 
-Acronym FIRST stand for below test features:
+Acronym ```FIRST``` stand for below test features:
 
 * **[F]**ast - A test should not take more than a second to finish the execution
 * **[I]**solated/Independent - No order-of-run dependency. They should pass or fail the same way in suite or when run individually. Do not depend on any external resources.
-* **[R]**epeatable
-A test method should NOT depend on any data in the environment/instance in which it is running.
-* **[S]**elf-Validating
-No manual inspection required to check whether the test has passed or failed.
-* **[T]**horough
-Should cover every use case scenario and NOT just aim for 100% coverage
+* **[R]**epeatable - A test method should NOT depend on any data in the environment/instance in which it is running.
+* **[S]**elf-Validating - No manual inspection required to check whether the test has passed or failed.
+* **[T]**horough - Should cover every use case scenario and NOT just aim for 100% coverage
 
 Pyramid of testing
 <figure>
   <img src="/assets/2018-12-01-integration-tests-with-testcontainers/pyramid_of_testing.png" alt="Pyramid of testing"> 
   <figcaption>Pyramid of testing</figcaption>
 </figure>
+As you can see in pyramid of testing, number of test should be average - more then manual and system tests, more than component and unit tests.
 
 # Concept of integration tests with testcontainers.org library
 testcontainers.org  is a Java library that allow to run docker images and control it from Java code.  (I will not cover topic what is Docker, if you need more information <a href="https://en.wikipedia.org/wiki/Docker_(software)">read more</a> about it.)
 
 The main concept of the proposal of integration test is: 
-* run your application 
+* Run your application 
 * Run ```external components``` as real docker containers. Here is important to understand what do I mean by ```external components```. It can be: 
     * database storage - for example run real PostgreSQL as docker image, 
     * Redis - run real Redis as docker image, 
@@ -86,11 +84,13 @@ As a good practice, you should remember about cleaning the state - delete insert
     }
     @AfterEach
     void tearDown() throws Exception {
-        accountRepository.findByName(name).ifPresent(account -> accountRepository.delete(account));
+        accountRepository.findByName(name)
+            .ifPresent(account -> accountRepository.delete(account));
     }
     @Test
     void shouldFindByName() throws Exception {
-        Account account = Account.builder().name(name).additionalInfo("additionalInfo").build();
+        Account account = Account.builder()
+            .name(name).additionalInfo("additionalInfo").build();
         accountRepository.save(account);
     }
     Optional<Account> actual = accountRepository.findByName(name);
