@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "microservices integration good practices"
+title: "Microservices integration good practices"
 categories: microservices
 ---
 
@@ -10,8 +10,24 @@ In this article, you will find information on:
 In this article I would concentrate on synchronous HTTP communication and asynchronous communication like Kafka, SQS. 
 
 # Introduction
-The IT industry moved into microservice architecture. Adoption rate is: [63%](https://www.globenewswire.com/news-release/2018/09/20/1573625/0/en/New-Research-Shows-63-Percent-of-Enterprises-Are-Adopting-Microservices-Architectures-Yet-50-Percent-Are-Unaware-of-the-Impact-on-Revenue-Generating-Business-Processes.html) and still is growing. 
-Problem of communication existed before, but was much smaller in monolitical applications. Now it became a big pitfall in microsevie architecture. 
+The IT industry moved into microservice architecture.
+InfoQ publish opinionated view about adoption rate of many technologies.
+In the architecture and design for 2019 Q1 we can see that microservice are used by `Late majority` - it means `80-90%` of people. 
+In the same diagram you can see that only `Early Adopters` do  `Correctly build distributted system `.
+ 
+<figure>
+  <img src="/assets/2019-11-01-microservices-integration-good-practices/architecture_trend_2019.jpg" alt="Architecture trend for 2019.Q1"> 
+  <figcaption>source: https://www.infoq.com/articles/architecture-trends-2019/</figcaption>
+</figure>
+ 
+I see a lot of people struggle with basic mechanism of communication of microservices. 
+
+
+
+
+
+
+
 
 We sacrificed simplicity of monolithical architecture for scalability.
 <figure>
@@ -62,7 +78,7 @@ Your HTTP requests can be unsuccessful because of many reasons:
 
 # Idempotency
 When we send the request and receive timeout, we are not sure what happened. Maybe we got temporary network problem, maybe server was just too slow. 
-The natural solution would be retry of action. In this case server need to be ready for it. I don't want to send the email twice or buy two items in the shop. 
+The natural solution would be retry of action. In this case server need to be ready for it (I don't want to send the email twice or buy two items in the shop).
 Server need to be able to discover that given request has been made in the past and return: 
 * http status that will let us know about it, personally return `409 Conflict` because it tells me that given entity already exists. If you can find a better code it is fine. Just make sure to document it in your contract documentation (e.g. Swagger)
 * body the same as for successful request, so the client is able to read returned values. 
@@ -71,9 +87,10 @@ Server need to be able to discover that given request has been made in the past 
 When the request was not successful, retry can be a natural solution. With retry mechanism you need to be careful. It is not a golden hammer. 
 Imagine that server has a performance problem. By retrying you can make situation even worse.
 Also think about retry strategy. Maybe you want to retry in the same time intervals or with exponential intervals. 
-Another question is how many times you should retry. You need to find a good balance between 
+Another question is how many times you should retry?
 
 # Circuit breaker
+
 
 # SAGA pattern 
 # SEDA 
