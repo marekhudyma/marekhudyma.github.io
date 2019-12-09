@@ -1,17 +1,62 @@
+---
+layout: post
+title: "Emitting events with database"
+categories: microservices
+---
 
+In this article, you will find information on:
+* how to guarantee delivery of event combined with database interactions. 
 
+# Introduction
+As a developer in many situations I need to execute some business logic and save results in database as well as emit event (e.g. Kafka event).
+Assumptions:
+* Database transaction need to be as quick as possible. I don't want to make any external calls inside transaction. Long transactions can degradate performance of database and extends lock time.
+* I want to be sure that both database and stream will end-up in proper state: database transaction need to be committed and event need to be emitted - [two-phase commit problem](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
+* Event need to be `delivered at-least-once` (it is completely fine to deliver event many times).
+* Order of event is important.
 
+# Solution
+## Happy path
+In the solution we will use advantage of database transactions.
 
-
-# Asynchronous communication and two phase commit example 
-
-# Synchronous HTTP communication 
-In most cases you need to response synchronousy, for example frontend applications need to display something immediately. This communication provide many problems.
-Your HTTP requests can be unsuccessful because of many reasons: 
-* Http timeout - in this case we are not sure what happened: maybe server was not able to process request or server processed the request but we didn't receive response. 
-* Server internal error - server may fail because of our request (and retry of the request will not help) or because temporary problems of service. 
+Algorithm:
+1. Open database transaction.
+2. Execute business logic 
+3. Insert `intention` of emitting event to database. I do not specify what is `intention`, it can be: 
+    * marshalled whole event and inserted to special table, 
+    * inserted table row, base on which it would be possible to build event in deterministic way (easy when data are immutable).
+4. Read from database all intentions of emitting events for given `business key` (e.g. account, user, where we want to have events in order).
+5. Commit transaction.
+6. Outside database transaction, send events.
+7. Open database transaction.
+8. Delete intentions of emitting events that were already emitted (you can also mark it as sent).
+9. Commit transaction.
 
 <figure>
-  <img src="/assets/2019-11-01-microservices-integration-best-practices/monolith-vs-microservices.png" alt="Monolith vs microservices"> 
-  <figcaption>Monolith vs microservices</figcaption>
+  <img src="/assets/2019-12-01-emitting-events-with-db/emit_part1.png" alt="Emit events"> 
+  <figcaption>Visualisation of happy path of emitting events</figcaption>
 </figure>
+
+## Recover state
+The algorithm above will work in happy path. But we want our system to recover from different situations:
+* first database transaction will fail - in this scenario state of database will not change. Event will not be emitted as well.
+* communication with stream will fail - in this scenario we need to introduce scheduler.
+* second database transaction will fail - in this scenario we need to introduce scheduler.
+
+Every interval of time (depends on us) scheduler need to execute algorithm.
+1. Open database transaction.
+2. Read old and not sent events for a given partition key (e.g. account, user).
+3. Commit transaction.
+4. Outside database transaction, send events.
+5. Open database transaction.
+6. Delete intentions of emitting events that were already emitted (you can also mark it as sent).
+7. Commit transaction.
+
+<figure>
+  <img src="/assets/2019-12-01-emitting-events-with-db/emit_part2.png" alt="Emit events - scheduler"> 
+  <figcaption>Visualisation of scheduler path of emitting events</figcaption>
+</figure>
+
+# Summary
+In this article I presented a safe way of emitting event together with database transaction.
+If order of events is not important, you can easily simplify algorithm. 
