@@ -46,7 +46,7 @@ The algorithm above will work in happy path. But we want our system to recover f
 ## Transaction committed, but message not send 
 One of the case is that transaction with logic was committed, intention to emit event is in database, but sending of event failed. 
 In this scenario we can have at least 2 solutions: 
-** if we emit events frequently, we can emit event just before next event. **
+**if we emit events frequently, we can emit event just before next event.**
 The main difference is that we write to database intention of emitting event. 
 
 1. Open database transaction.
