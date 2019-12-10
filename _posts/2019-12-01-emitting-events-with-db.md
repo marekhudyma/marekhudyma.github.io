@@ -53,15 +53,13 @@ The main difference is that we write to database intention of emitting event.
 2. Execute business logic 
 3. Insert `intention` of emitting event to database. 
 4. Commit transaction.
-```diff
-- 5. Open read inly transaction (it can increase performance)
-- 6. Read all intentions of emitting events for given partition.
-- 7. Commit read only transaction
-```
-7. Outside database transaction, send events.
-8. Open database transaction.
-9. Delete intentions of emitting event that were already emitted (you can also mark it as sent).
-10. Commit transaction.
+5. ```diff - Open read inly transaction (it can increase performance)```
+6. ```diff - Read all intentions of emitting events for given partition.```
+7. ```diff - Commit read only transaction```
+8. Outside database transaction, send events.
+9. Open database transaction.
+10. Delete intentions of emitting event that were already emitted (you can also mark it as sent).
+11. Commit transaction.
 
 The algorithm has been presented below:
 <figure>
