@@ -71,7 +71,8 @@ The natural solution would be to stop sending requests until service recover. To
 * [Resilience4j](https://github.com/resilience4j/resilience4j)
 
 # Async 
-Solution for timeouts in communication can we switch to async frameworks which do not depend on threads and do not suffer when a call takes a lot of time:Example of frameworks:* [Spring WebFlux](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html)
+Solution for timeouts in communication can we switch to async frameworks which do not depend on threads and do not suffer when a call takes a lot of time:Example of frameworks:
+* [Spring WebFlux](https://docs.spring.io/spring/docs/current/spring-framework-reference/web-reactive.html)
 * [Vert.x](https://vertx.io)
 * [Micronaut async](https://micronaut.io)
 
