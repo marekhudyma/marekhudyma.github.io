@@ -25,11 +25,11 @@ Algorithm:
 3. Insert `intention` of emitting event to database. I do not specify what is `intention`, it can be: 
     * marshalled whole event and inserted to special table, 
     * inserted table row, base on which it would be possible to build event in deterministic way (easy when data are immutable).
-5. Commit transaction.
-6. Outside database transaction, send events.
-7. Open database transaction.
-8. Delete intentions of emitting event that were already emitted (you can also mark it as sent).
-9. Commit transaction.
+4. Commit transaction.
+5. Outside database transaction, send events.
+6. Open database transaction.
+7. Delete intentions of emitting event that were already emitted (you can also mark it as sent).
+8. Commit transaction.
 
 <figure>
   <img src="/assets/2019-12-01-emitting-events-with-db/happy_path.png" alt="Emit events happy path"> 
@@ -38,17 +38,24 @@ Algorithm:
 
 # Recover state
 The algorithm above will work in happy path. But we want our system to recover from different situations:
-* first database transaction will fail - in this scenario state of database will not change. Event will not be emitted as well. No action needed. 
-* communication with stream will fail - in this scenario we need to introduce some recovery mode to send message again.
-* second database transaction will fail - in this scenario we need to introduce some recovery mode to send message again and delete intention. 
+* first database transaction fails - in this scenario state of database will not change. Event will not be emitted as well. **No action needed.**
+* **emitting event fails** - in this scenario we need to introduce some recovery mode to send message again.
+* **second database transaction fails** - when it happen recovery mechanism (described below) will send it again xxxxxx
 
-
-## Transaction committed, but message not send 
+## Emitting event fails
 One of the case is that transaction with logic was committed, intention to emit event is in database, but sending of event failed. 
 In this scenario we can have at least 2 solutions: 
-**if we emit events frequently, we can emit event just before next event.**
-The main difference is that we write to database intention of emitting event. 
 
+### Frequent events 
+If we emit events frequently for all partitions, we can emit old events just before current one. 
+Before emitting current event we need to check if in database we have some old and send it.
+The main difference is that after writing to database intention of sending event:
+* we commit transaction, 
+* open read only transaction,
+* read all not emitted events for whole partition key,
+* emit all events (old and current one).
+
+Detail algorithm: 
 1. Open database transaction.
 2. Execute business logic 
 3. Insert `intention` of emitting event to database. 
@@ -67,8 +74,8 @@ The algorithm has been presented below:
   <figcaption>Emit events with another event</figcaption>
 </figure>
 
-
-2. if we do not events very frequently, we can create a special scheduler to send old 
+### Rare events
+If we do not emit events very frequently, we can create a special scheduler to emit old events.
 
 Every interval of time (depends on us) scheduler need to execute algorithm.
 1. Open database transaction.
@@ -84,9 +91,11 @@ Every interval of time (depends on us) scheduler need to execute algorithm.
   <figcaption>Visualisation of scheduler path of emitting events</figcaption>
 </figure>
 
+## Second database transaction fails
+It can happen that second transaction fails - after successfully emitting event, we fail to delete intention from database.
+In this scenario our auto-recovering mechanism will handle the situation. In both cases (described in frequent events and rare events) algorithms will emit again events. 
+It is not a problem since events can be delivered 1 or more times. 
+
 # Summary
 In this article I presented a safe way of emitting event together with database transaction.
 If order of events is not important, you can easily simplify algorithm. 
-
-
-4. Read from database all intentions of emitting events for given `business key` (e.g. account, user, where we want to have events in order).
