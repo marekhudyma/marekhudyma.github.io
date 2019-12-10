@@ -9,9 +9,11 @@ In this article, you will find information on:
 
 # Introduction
 As a developer in many situations I need to execute some business logic and save results in database as well as emit event (e.g. Kafka event).
-Assumptions:
-* Database transaction need to be as quick as possible. I don't want to make any external calls inside transaction. Long transactions can degradate performance of database and extends lock time.
-* I want to be sure that both database and stream will end-up in proper state: database transaction need to be committed and event need to be emitted - [two-phase commit problem](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
+In this article I will present algorithm that I follow.
+
+Assumptions of a solution:
+* Database transaction need to be as quick as possible. I don't want to make any external calls inside transaction. Long transactions can degradate performance of database and extends locking time.
+* I want to be sure that both database and stream will end-up in proper state: everything fail or everything finish with success - database transaction need to be committed and event need to be emitted - [two-phase commit problem](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
 * Event need to be `delivered at-least-once` (it is completely fine to deliver event many times).
 * Order of event is important inside partition only.
 
@@ -38,22 +40,16 @@ Algorithm:
 
 # Recover state
 The algorithm above will work in happy path. But we want our system to recover from different situations:
-* first database transaction fails - in this scenario state of database will not change. Event will not be emitted as well. **No action needed.**
-* **emitting event fails** - in this scenario we need to introduce some recovery mode to send message again.
-* **second database transaction fails** - when it happen recovery mechanism (described below) will send it again xxxxxx
+* **first database transaction fails** - in this scenario state of database will not change. Event will not be emitted as well. **No action needed.**
+* **emitting event fails** - in this scenario we need to introduce some recovery mode to emit event again.
+* **second database transaction fails** - in this scenario we need to introduce some recovery mode to delete intentions of emitting events.
 
 ## Emitting event fails
-One of the case is that transaction with logic was committed, intention to emit event is in database, but sending of event failed. 
-In this scenario we can have at least 2 solutions: 
+In this case transaction with logic was committed, intention to emit event was saved in database, but sending of event failed. Here are two solutions for this problem.
 
 ### Frequent events 
 If we emit events frequently for all partitions, we can emit old events just before current one. 
 Before emitting current event we need to check if in database we have some old and send it.
-The main difference is that after writing to database intention of sending event:
-* we commit transaction, 
-* open read only transaction,
-* read all not emitted events for whole partition key,
-* emit all events (old and current one).
 
 Detail algorithm: 
 1. Open database transaction.
@@ -75,7 +71,7 @@ The algorithm has been presented below:
 </figure>
 
 ### Rare events
-If we do not emit events very frequently, we can create a special scheduler to emit old events.
+If we do **not** emit events very frequently, we can create a special scheduler to emit old events.
 
 Every interval of time (depends on us) scheduler need to execute algorithm.
 1. Open database transaction.

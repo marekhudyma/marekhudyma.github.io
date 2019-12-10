@@ -1,7 +1,7 @@
 ---
 layout: post
-title: "Microservices integration best practices"
-categories: microservices
+title: "REST communication best practices"
+categories: REST,microservices
 ---
 
 In this article, you will find information on:
@@ -15,7 +15,7 @@ In the architecture and design for 2019 Q1, we can see that microservices are us
 In the same diagram, you can see that only `Early Adopters` do  `Correctly build distributted system ` - `~15%` of people. 
  
 <figure>
-  <img src="/assets/2019-11-01-microservices-integration-best-practices/architecture_trend_2019.jpg" alt="Architecture trend for 2019.Q1"> 
+  <img src="/assets/2019-11-01-REST-communication-best-practices/architecture_trend_2019.jpg" alt="Architecture trend for 2019.Q1"> 
   <figcaption>source: https://www.infoq.com/articles/architecture-trends-2019/</figcaption>
 </figure>
  
@@ -33,7 +33,7 @@ It can timed out because:
 The problem is that you have no idea with a scenario just happened. You can't know that. 
 
 <figure>
-  <img src="/assets/2019-11-01-microservices-integration-best-practices/http_communication_problems.png" alt="Http timeout problems"> 
+  <img src="/assets/2019-11-01-REST-communication-best-practices/http_communication_problems.png" alt="Http timeout problems"> 
   <figcaption>Http timeout problems</figcaption>
 </figure>
 
@@ -82,7 +82,7 @@ The main blocker is a database, while R2DBC driver is not production-ready. 
 When you execute some logic in database transaction it is easy to rollback everything when something failed. 
 It became more complicated in distributed systems with distributed transactions. When your system calls successfully Service A, but failed during the call of Service B, we may leave the system in a bad state.
 <figure>
-  <img src="/assets/2019-11-01-microservices-integration-best-practices/distributed_transaction.png" alt="Distributed transaction"> 
+  <img src="/assets/2019-11-01-REST-communication-best-practices/distributed_transaction.png" alt="Distributed transaction"> 
   <figcaption>Distributed transaction</figcaption>
 </figure>
 
