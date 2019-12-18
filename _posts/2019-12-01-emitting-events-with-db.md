@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Emitting events with database"
-categories: microservices
+categories: microservices, stream
 ---
 
 In this article, you will find information on:
@@ -9,16 +9,21 @@ In this article, you will find information on:
 
 # Introduction
 As a developer in many situations I need to execute some business logic and save results in database as well as emit event (e.g. Kafka event).
-In this article I will present algorithm that I follow.
+At the beginning it looks like easy task, but it gets more and more complicated when you go into details. 
+What make it complicated is [two-phase commit problem](https://en.wikipedia.org/wiki/Two-phase_commit_protocol). You need to set two sources in a proper state: database and stream. You want to either make success or fail in both places. 
+
 
 Assumptions of a solution:
-* Database transaction need to be as quick as possible. I don't want to make any external calls inside transaction. Long transactions can degradate performance of database and extends locking time.
+* Database transaction need to be as quick as possible. I don't want to make any external calls inside transaction with business logic.
 * I want to be sure that both database and stream will end-up in proper state: everything fail or everything finish with success - database transaction need to be committed and event need to be emitted - [two-phase commit problem](https://en.wikipedia.org/wiki/Two-phase_commit_protocol)
 * Event need to be `delivered at-least-once` (it is completely fine to deliver event many times).
 * Order of event is important inside partition only.
 
 # Solution
 ## Happy path
+Below I describe `happy path` solution where we do not care two-phase commit problem. I
+
+
 In the solution we will use advantage of database transactions.
 
 Algorithm:
