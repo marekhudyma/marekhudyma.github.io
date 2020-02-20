@@ -14,11 +14,10 @@ Every object in Java return hashCode as an `integer` value. It is used in many d
 How is String.hashCode() implemented? It can be represented as the simplified pseudo-code below:
 ```
 public int hashCode() {
-    int h = hash;
-    if (h == 0) {
+    if (hash == 0) {
         hash = s[0]*31^(n-1) + s[1]*31^(n-2) + … + s[n-1]
     }
-    return h;
+    return hash;
 }
 ```
 Where:
@@ -123,8 +122,9 @@ I think JVM developers were fully aware of it, that's the reason of their implem
 
 # Security
 I think this fact can be interesting from a security point of view. If you know that a system is written in Java (JVM based), you can suspect that HashMap / HashSet is used in the implementation. 
-You can send `unlucky Strings` to the system and cause a performance degradation. What's more funny, it would be extremely difficult to find such a vector of attack. 
-[Dos attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) that uses `unlucky String` can easily kill our CPU making it calculate hashCode of String all the time. 
+You can send very long `unlucky Strings` to the system and cause a performance degradation. What's more funny, it would be extremely difficult to find such a vector of attack. 
+[Dos attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) that uses `unlucky Strings` can easily kill our CPU making it calculate hashCode of String all the time. 
+The biggest effect would be in systems, which use a lot of HashSet/HashMaps or HashSet/HashMap with a big number of Strings inside.
 
 # Summary
 As JVM developers, we need to be aware of String.hashCode() implementation. In most cases, it is just curiosity. I wish it would never cause production issues. 
