@@ -5,13 +5,13 @@ categories: JDK,Java,String
 ---
 
 In this article, you will find information on:
-* interesting behavior of Java String.hashCode() method, when returned value is equal to 0.
+* interesting behavior of Java String.hashCode() method, when returned value is equal to zero.
 
-Code with performance benchmarks you can find here [here](https://github.com/marekhudyma/string.hashCode).
+Code with performance benchmarks you can find here [here]:(https://github.com/marekhudyma/string.hashCode).
 
 # Introduction
-Every object in Java return hashCode as `integer` value. Is it used in many data structures like: HashMap, HashTable, HashSet etc.
-How is String.hashCode() implemented? It can be represented as simplified pseudo-code below:
+Every object in Java return hashCode as an `integer` value. It is used in many data structures like: HashMap, HashTable, HashSet etc.
+How is String.hashCode() implemented? It can be represented as the simplified pseudo-code below:
 ```
 public int hashCode() {
     int h = hash;
@@ -21,18 +21,18 @@ public int hashCode() {
     return h;
 }
 ```
-where:
-* s[i] – is the ith character of the string,
-* n – is the length of the string, 
-* ^ – indicates exponentiation.
+Where:
+* s[i] – is the ith character of the string
+* n – is the length of the string
+* ^ – indicates exponentiation
 
-String is heavily used in JDK. It is immutable, so it doesn't make sense to compute it every time, when method is invoked. 
-String stores computed hashCode value in the variable. If cached value (`h`) is equal zero, the computation is executed. 
+String is heavily used in JDK. It is immutable, so it doesn't make sense to compute it every time, when the method is invoked. 
+String stores computed hashCode value in the variable. If the cached value (`h`) is equal to zero, the computation is executed. 
  
-What will happen if computed hashCode is equal 0 ? Finally it is normal integer value. According to the algorithm it will compute hashCode again. In this case operations on hashMap should be much slower. 
+What will happen if the computed hashCode is equal to zero ? Finally, it is a normal integer value. According to the algorithm, it will compute a hashCode again. In this case, operations on a hashMap should be much slower. 
 
 # Benchmark 
-Let's run JMH benchmark to check performance. I run benchmark below: 
+Let's run JMH benchmark to check performance. I ran benchmark below: 
 ```
     @Benchmark
     @BenchmarkMode(Mode.All)
@@ -45,9 +45,9 @@ with two texts:
 1. `"normalString"` hashCode is equal `151224280`
 2. `"Airlia unhallow"` hashCode is equal `0`.
         
-JMH benchmark shown that insertion time to hashMap was equal! It shown that calculation of hashCode of short Strings is bloody fast. 
+JMH benchmark has shown that insertion the time to hashMap was equal! It was shown that the calculation of hashCode of short Strings is incredibly fast. 
 
-I decided to find a long String with hashCode equal to 0. I took standard `Lorem ipsum` text and added integer at the end as long as I found String with hashCode = 0. 
+I decided to find a long String with hashCode equal to zero. I took the standard `Lorem ipsum` text and added an integer at the end, as long as I found a String with hashCode = 0. 
 
 Warning: there is number `72098087` at the end. 
 ```
@@ -56,13 +56,13 @@ Warning: there is number `72098087` at the end.
 
 I run benchmark again: 
 1. with standard `Lorem ipsum` text. 
-2. with standard `Lorem ipsum` + `72098087`, so hashCode was equal to 0.
-This time `unlucky String` was `110 times` slower ! This is significant difference!
+2. with standard `Lorem ipsum` + `72098087`, so hashCode was equal to zero.
+This time, the `unlucky String` was `110 times` slower! This is a significant difference!
   
 # Frequency of String.hashCode() = 0
-I wanted to check, how frequently can we find a String with hashCode equal 0. I took list of [english words]( https://github.com/dwyl/english-words) (more than `450_000`) and none of the work had hashCode equal 0!
-I was surprised, I thought that it will appear more frequently. 
-I decided to write some program to find all bigrams (combinations of 2 words). I found 48:
+I wanted to check, how frequently can we find a String with hashCode equal zero? I took a list of [english words]( https://github.com/dwyl/english-words) (more than `450_000`) and none of the work had hashCode equal zero!
+I was surprised; I thought that it would appear more frequently. 
+I decided to write a program to find all bigrams (combinations of 2 words). I found 48:
 ```
 Airlia unhallow
 Alphonsa Flavobacterium
@@ -116,15 +116,15 @@ xanthopsydracia so-named
 ```
 
 # String improvement
-How could be String.hashCode() improved? One of the solution is adding a boolean flag. Base on it, String would determinate if calculations should be executed. 
-The price for it is storing boolean flag in every String object.
-Overall speed that we gain is not so big. From statistical point of view, `unlucky String` happen once per 4_294_967_295 Strings. In worst case JVM will deal with unlucky String a little bit slower. 
+How could the String.hashCode() be improved? One of the solutions is adding a boolean flag. Base on that, the String would determine if calculations should be executed. 
+The price for it is storing the boolean flag in every String object. 
+Overall speed that we gain is not so big. From a statistical point of view, `unlucky Strings` happen once per 4_294_967_295 Strings. Worst case scenario, JVM will deal with an unlucky String being a little bit slower. 
 I think JVM developers were fully aware of it, that's the reason of their implementation. 
 
 # Security
-I think this fact can be interesting from security point of view. If you know that system is written in Java (JVM based), you can suspect that HashMap / HashSet is used in the implementation. 
-You can send `unlucky String` to the system and cause performance degradation. What's more funny, it would be extremely difficult to find such vector of attack. 
+I think this fact can be interesting from a security point of view. If you know that a system is written in Java (JVM based), you can suspect that HashMap / HashSet is used in the implementation. 
+You can send `unlucky Strings` to the system and cause a performance degradation. What's more funny, it would be extremely difficult to find such a vector of attack. 
 [Dos attack](https://en.wikipedia.org/wiki/Denial-of-service_attack) that uses `unlucky String` can easily kill our CPU making it calculate hashCode of String all the time. 
 
 # Summary
-As JVM developers, we need to be aware of String.hashCode() implementation. In most cases it is just curiosity. I wish you it never cause production issue. 
+As JVM developers, we need to be aware of String.hashCode() implementation. In most cases, it is just curiosity. I wish it would never cause production issues. 
