@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "Usage of exceptions in business applications"
-categories: JDK,Java,String
+categories: Java,Exceptions
 ---
 
 In this article, you will find information on:
@@ -17,7 +17,7 @@ For sure it can handle happy path. But what if we have problems like:
 * account is blocked and we cannot update some information?
 Usually developers thrown `RuntimeException` of given type. These exceptions can have `HTTP annotations`, e.g.:
 
-```
+```java
 @ResponseStatus(value = HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
 }
@@ -25,7 +25,7 @@ public class ResourceNotFoundException extends RuntimeException {
 
 So in this scenario we are mixing `service`  and `HTTP` layers. By definition in multilayer application, layer below (here exception from sevice) shouldn't have access to layer above (HTTP annotations).
 We can also add `ExceptionHandler`, e.g.:
-```
+```java
 @RestControllerAdvice(AccountController.class})
 public class ApiExceptionHandling {
    // exception handlers 
@@ -81,7 +81,7 @@ There are many reasons why throwing business exceptions can be bad:
 # Example of control flow without exceptions
 As an  example of solution I would like to show Spring Http Controller method that is calls `AccountService` update method with signature: 
 
-```
+```java
 Result<Error, Account> execute(AccountUpdate accountUpdate);
 ```
 
@@ -89,27 +89,22 @@ It will return `Result` object with Account inside when for happy path and `Resu
 It can be mapped in nice way with `new switch expression` introduced in [Java 13](https://docs.oracle.com/en/java/javase/13/language/switch-expressions.html).
 This stucture will make you think about all corner cases and `new switch expression` will force you to mape all of them. 
 
-```
+<pre><code>
 @PatchMapping(value = "/accounts/{accountId}", consumes = PATCH_HEADER)
-public ResponseEntity<?> patch(
-    @PathVariable UUID accountId,
-    @Valid @RequestBody PatchAccountDto patchAccountDto,
-    @RequestHeader(name = HttpHeaders.ETAG) String etag) {
+public ResponseEntity<?> patch(@PathVariable UUID accountId,
+  @Valid @RequestBody PatchAccountDto patchAccountDto,
+  @RequestHeader(name = HttpHeaders.ETAG) String etag) {
 
-    return AccountService
-            .execute(patchToAccountUpdateConverter
-                .convert(accountId, patchAccountDto.scoring(), etag))
-            .map(error -> switch (error) {
-                        case ACCOUNT_NOT_FOUND -> 
-                            ResponseEntity.notFound().build();
-                        case VERSION_NOT_MATCH -> 
-                            ResponseEntity
-                                .status(HttpStatus.PRECONDITION_FAILED)
-                                .build();
-                    },
-                    account -> ResponseEntity.noContent().build());
+  return updateAccountCommand
+    .execute(converter.convert(accountId, patchAccountDto.scoring(), etag))
+<b>    .map(error -> switch (error) {
+        case ACCOUNT_NOT_FOUND -> ResponseEntity.notFound().build();
+        case VERSION_NOT_MATCH -> ResponseEntity
+            .status(HttpStatus.PRECONDITION_FAILED).build();
+    },
+    account -> ResponseEntity.noContent().build());</b>
 }
-```
+</code></pre>
 
 # Summary
 In this article I shown arguments why usage of business exceptions is bad and how it can be replace with other code structures.
