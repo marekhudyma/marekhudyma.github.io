@@ -89,9 +89,9 @@ It will return `Result` object with Account inside when for happy path and `Resu
 
 ```
 public Result<Error, Account> execute(AccountUpdate accountUpdate) {
-    return accountRepository.findById(accountUpdate.getId()).map(a -> {
-        a.setScoring(accountUpdate.getScoring());
-        return save(a);
+    return accountRepository.findById(accountUpdate.getId()).map(account -> {
+        account.setScoring(accountUpdate.getScoring());
+        return Result.ok(accountRepository.save(account));
     }).orElse(Result.fail(Error.ACCOUNT_NOT_FOUND));
 }
 ```
