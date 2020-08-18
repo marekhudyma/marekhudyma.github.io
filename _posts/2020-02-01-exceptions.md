@@ -85,8 +85,18 @@ As an  example of solution I would like to show Spring Http Controller method th
 Result<Error, Account> execute(AccountUpdate accountUpdate);
 ```
 
-It will return `Result` object with Account inside when for happy path and `Result` with enumeration `Error` if something went bad. 
-It can be mapped in nice way with `new switch expression` introduced in [Java 13](https://docs.oracle.com/en/java/javase/13/language/switch-expressions.html).
+It will return `Result` object with Account inside when for happy path and `Result` with enumeration `Error` if something went bad. Let's see example:
+
+```
+public Result<Error, Account> execute(AccountUpdate accountUpdate) {
+    return accountRepository.findById(accountUpdate.getId()).map(a -> {
+        a.setScoring(accountUpdate.getScoring());
+        return save(a);
+    }).orElse(Result.fail(Error.ACCOUNT_NOT_FOUND));
+}
+```
+
+The response can be mapped in nice way with `new switch expression` introduced in [Java 13](https://docs.oracle.com/en/java/javase/13/language/switch-expressions.html).
 This stucture will make you think about all corner cases and `new switch expression` will force you to mape all of them. 
 
 <pre><code>
@@ -99,8 +109,6 @@ public ResponseEntity<?> patch(@PathVariable UUID accountId,
     .execute(converter.convert(accountId, patchAccountDto.scoring(), etag))
 <b>    .map(error -> switch (error) {
         case ACCOUNT_NOT_FOUND -> ResponseEntity.notFound().build();
-        case VERSION_NOT_MATCH -> ResponseEntity
-            .status(HttpStatus.PRECONDITION_FAILED).build();
     },
     account -> ResponseEntity.noContent().build());</b>
 }
