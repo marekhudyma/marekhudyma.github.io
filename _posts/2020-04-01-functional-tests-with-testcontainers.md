@@ -1,0 +1,197 @@
+---
+layout: post
+title: "Functional tests with testcontainers.org library and Spring Boot"
+categories: tests
+---
+
+In this article, you will find information on:
+* how to write functional tests with testcontainers.org library. 
+Before you read this article I highly recommend to read the one about [integration tests](2018-12-01-integration-tests-with-testcontainers.md)
+Whole can follow the idea on [working example here](https://github.com/marekhudyma/application-style).
+
+# Definition
+
+According to the Wikipedia definition of [Functional Test](https://en.wikipedia.org/wiki/Functional_testing)
+
+> Functional testing is a quality assurance (QA) process and a type of black-box testing that bases its test cases on the specifications of the software component under test. Functions are tested by feeding them input and examining the output, and internal program structure is rarely considered (unlike white-box testing).
+> Functional testing is conducted to evaluate the compliance of a system or component with specified functional requirements. Functional testing usually describes what the system does
+
+# Concept 
+The main idea of functional tests is to make it independent from actual implementation. To achieve it do: 
+* pack your microservice into docker container, 
+* run your service as docker container 
+* run all its dependencies like: database, queues, streams, as separate docker container. 
+* make your testing code independent from implementation. I do it by having multi-module project with `service` and `functional-tests`.
+
+The structure of invocation can look like below.
+<figure>
+  <img src="/assets/2020-04-01-functional-tests-with-testcontainers/functional_tests.png" alt="Functional Tests"> 
+  <figcaption>Functional Tests</figcaption>
+</figure>
+
+You need to remember that a proper pyramid of tests is (from the biggest amount to the smallest amount): 
+* unit tests 
+* component tests 
+* integration tests
+* functional tests 
+* system tests 
+
+It is very nice to have functional tests, but it cannot dominate your testing structure.
+
+## Packing into docker container 
+Packing into docker image is pretty simple, in the root of your application just define `Dockerfile` like: 
+
+```
+FROM openjdk:14-alpine
+COPY service/target/application-style-exec.jar application-style.jar
+EXPOSE 8080
+ENTRYPOINT java --enable-preview ${ADDITIONAL_JAVA_OPTIONS} -jar application-style.jar
+```
+
+## Code separation 
+I recommend organize code into multi-module project with two modules: `service` and `functional-tests`. The `functiona-tests` module cannot have any dependency to `service`. 
+```
+.
+├── service
+│   └── pom.xml
+├── functional-tests
+│   └── pom.xml
+├── Dockerfile
+└── pom.xml
+```
+
+## Rules 
+Because we don't have access to production code, we cannot use any `DTO` objects, `database repositories`. 
+
+* We should operate on simplest possible interfaces. For example if we call `REST` endpoint, send plain `JSON` and read `JSON`. Don't create any internal `DTOs`.
+* I recommend using only official interfaces to create resources. We could create entity directly inside database and inside test just retrieve it. In my opinion it would not be black-box test then. If service change storage in the future, we would need to change our black box tests.
+
+# AbstractFunctionalTests
+All functional test extend AbstractFunctionalTest where all needed docker images are run.
+In our example I will run my microservice which is connected to database.
+
+```java
+public class AbstractFunctionalTest {
+
+  private static final int HTTP_PORT = 8080;
+  private static final int DEBUG_PORT = 5005;
+  private static final Logger LOGGER = LoggerFactory.getLogger("Docker-Container");
+  private static final Network network = Network.newNetwork();
+
+  public static final PostgreSQLContainer postgreSQLContainer = 
+    (PostgreSQLContainer) new PostgreSQLContainer("postgres:12.4")
+      .withUsername("username")
+      .withPassword("password")
+      .withDatabaseName("application-style")
+      .withNetwork(network)
+      .withNetworkAliases("postgres");
+
+  private static final GenericContainer<?> backendContainer;
+
+  static {
+    postgreSQLContainer.start();
+    backendContainer = ofNullable(System.getenv("CONTAINER_VERSION"))
+      .map(version -> new ServiceContainer("docker-repository/application-style", version))
+      .orElseGet(() -> new ServiceContainer(".", Paths.get("../")))
+      .withExposedPorts(HTTP_PORT, DEBUG_PORT)
+      .withFixedExposedPort(DEBUG_PORT, DEBUG_PORT)
+      .withEnv("SPRING_PROFILES_ACTIVE", "functional")
+      .withEnv("ADDITIONAL_JAVA_OPTIONS", 
+        "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:" + DEBUG_PORT)
+      .withNetwork(network)
+      .withCreateContainerCmdModifier(cmd -> cmd.withName("application-style"))
+      .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("Service"))
+      .waitingFor(Wait.forHttp("/actuator/health").forPort(HTTP_PORT)
+        .withStartupTimeout(Duration.ofMinutes(2)));
+
+      backendContainer.start();
+
+      // make sure that containers will be stop in fast way (Ryuk can be slow)
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        LOGGER.info("DockerContainers stop");
+        backendContainer.stop();
+        postgreSQLContainer.stop();
+      }));
+    }
+}
+```
+
+# Debugging
+Writing functional tests can be time consuming and difficult. Sometimes it is necessary to debug your code. Code is run as docker image, how to debug it?
+You can do it with `remote debugger`. First you need to run your code with enabled remote debugger by passing options:
+```java
+.withEnv("ADDITIONAL_JAVA_OPTIONS", 
+ "-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=0.0.0.0:" 
+ + DEBUG_PORT)
+```
+In the code above, flag `suspend=y` tells JVM waits for remote debugger to connect.
+We also need to specify which port is exposed by container and which ports have fixed ports. If your CI/CD tool shares machine between multiple builds, you can have a port conflict, so enable it locally only. 
+
+```java
+.withExposedPorts(HTTP_PORT, DEBUG_PORT)
+.withFixedExposedPort(DEBUG_PORT, DEBUG_PORT)
+```
+
+The method `withFixedExposedPort` is protected in TestContainer, GenericContainer class. That's why you need to create a new class and expose it as a public. 
+```java
+public class ServiceContainer extends GenericContainer<ServiceContainer> {
+  public ServiceContainer withFixedExposedPort(int hostPort, int containerPort) {
+    super.addFixedExposedPort(hostPort, containerPort, InternetProtocol.TCP);
+    return this;
+  }
+}
+```
+
+When you run such functional test, your JVM waits for remote debugger, connect to it. 
+Inside IntelliJ add project `Remote`, define the same port as in the test (usually `5005`), select use module classpath: your sources and click debug.
+    
+# Logging 
+It is critical to add logging to a service. Without it you are completely blind if there is any error. Don't forget to add logger. 
+
+```
+  .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("Service"))
+```
+# Stopping images 
+One of the biggest advantage of TestContainers library is a fact that there is a Ryuk containers which stops all other containers when initial JVM process dies. 
+It protects us from unwanted zombie containers (and networks, volumes) in the system. But if you run docker images from multiple maven modules, Ryuk image can be too slow and build can crash.
+That's why I additionally specify `shutdownHook` which stops all docker images when tests are over.
+
+
+# Example of Functional Test
+
+The example of functional tests can look like below. It is pretty simplified to make it more readable.
+
+```java
+public class AccountFunctionalTest extends AbstractFunctionalTest {
+  
+  @Test
+  void shouldUpdateAccount() throws JSONException {
+    // given
+    createAccount("00000000-0000-0000-0000-000000000001");
+
+    // when
+    ResponseEntity<String> response = getTestRestTemplate()
+      .exchange("/accounts/00000000-0000-0000-0000-000000000001",
+      HttpMethod.PATCH,
+      new HttpEntity<>(readFromResources("account_functional_test/patch_account_dto.json"), 
+        getPatchHeaders(etag)),
+      String.class);
+
+    // then
+    assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    var actual = getAccount("00000000-0000-0000-0000-000000000001");
+    var expected = readFromResources("account_functional_test/get_account_dto.json");
+    JSONAssert.assertEquals(expected, actual, JSONCompareMode.LENIENT);
+}
+```
+
+# Difference between Integration and Functional Tests
+If you read the previous article about [integration tests](2018-12-01-integration-tests-with-testcontainers.md) you may ask: what is actual difference?
+These two types of tests may be pretty similar. I can highlight the most important ones:
+* in FunctionalTests you are not allowed to use any production code,
+* all actions need to be done by public interfaces of your system (don't create anything directly inside database),
+* inside functional tests you should test happy paths, not corner cases. In contrast inside integration tests you can simulate e.g. timeouts, bad responses. etc. 
+
+# Summary 
+I find Functional Tests as very interesting concept. TestContainers library make it possible to use this concept inside java world. 
+It can be pretty expensive to implement it, but it also gives you a big confidence that system still works during deep refactoring.
