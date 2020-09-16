@@ -7,7 +7,7 @@ categories: tests
 In this article, you will find information on:
 * how to write functional tests with testcontainers.org library. 
 Before you read this article I highly recommend to read the one about [integration tests](2018-12-01-integration-tests-with-testcontainers.md)
-Whole can follow the idea on [working example here](https://github.com/marekhudyma/application-style).
+You can follow the idea on [working example here](https://github.com/marekhudyma/application-style).
 
 # Definition
 
@@ -18,18 +18,19 @@ According to the Wikipedia definition of [Functional Test](https://en.wikipedia.
 
 # Concept 
 The main idea of functional tests is to make it independent from actual implementation. To achieve it do: 
-* pack your microservice into docker container, 
-* run your service as docker container 
-* run all its dependencies like: database, queues, streams, as separate docker container. 
-* make your testing code independent from implementation. I do it by having multi-module project with `service` and `functional-tests`.
+* **pack and run your service into docker container**, 
+* **run all its dependencies** like: database, queues, streams, **as separate docker container**. 
+* **make your testing code independent from implementation**. I do it by having multi-module project with `service` and `functional-tests`.
 
 The structure of invocation can look like below.
 <figure>
   <img src="/assets/2020-04-01-functional-tests-with-testcontainers/functional_tests.png" alt="Functional Tests"> 
   <figcaption>Functional Tests</figcaption>
 </figure>
+To summarize the main concept: Your entire production code need to be packed and run as docker image. If your service need to communicate to database, run database as docker image as well. 
+Your `functional tests` will test your code run as docker image. So your testing code does not have any connection to production code. 
 
-You need to remember that a proper pyramid of tests is (from the biggest amount to the smallest amount): 
+You also need to remember that a proper pyramid of tests is (from the biggest amount to the smallest amount): 
 * unit tests 
 * component tests 
 * integration tests
@@ -61,7 +62,7 @@ I recommend organize code into multi-module project with two modules: `service` 
 ```
 
 ## Rules 
-Because we don't have access to production code, we cannot use any `DTO` objects, `database repositories`. 
+Because we don't have access to production code, we cannot use any `DTO` objects, `database repositories`, etc. 
 
 * We should operate on simplest possible interfaces. For example if we call `REST` endpoint, send plain `JSON` and read `JSON`. Don't create any internal `DTOs`.
 * I recommend using only official interfaces to create resources. We could create entity directly inside database and inside test just retrieve it. In my opinion it would not be black-box test then. If service change storage in the future, we would need to change our black box tests.
@@ -132,7 +133,7 @@ We also need to specify which port is exposed by container and which ports have 
 .withFixedExposedPort(DEBUG_PORT, DEBUG_PORT)
 ```
 
-The method `withFixedExposedPort` is protected in TestContainer, GenericContainer class. That's why you need to create a new class and expose it as a public. 
+The method `withFixedExposedPort` is protected  in GenericContainer (in TestContainer) class. That's why you need to create a new class and expose it as a public. 
 ```java
 public class ServiceContainer extends GenericContainer<ServiceContainer> {
   public ServiceContainer withFixedExposedPort(int hostPort, int containerPort) {
@@ -151,15 +152,15 @@ It is critical to add logging to a service. Without it you are completely blind 
 ```
   .withLogConsumer(new Slf4jLogConsumer(LOGGER).withPrefix("Service"))
 ```
-# Stopping images 
-One of the biggest advantage of TestContainers library is a fact that there is a Ryuk containers which stops all other containers when initial JVM process dies. 
-It protects us from unwanted zombie containers (and networks, volumes) in the system. But if you run docker images from multiple maven modules, Ryuk image can be too slow and build can crash.
-That's why I additionally specify `shutdownHook` which stops all docker images when tests are over.
 
+# Stopping images 
+One of the biggest advantage of TestContainers library is a fact that there is a `Ryuk` containers which stops all other containers when initial JVM process dies. 
+It protects us from unwanted zombie containers (and networks, volumes) in the system. But if you run docker images from multiple maven modules, `Ryuk` image can be too slow and build can crash.
+That's why I additionally specify `shutdownHook` which stops all docker images when tests are over.
 
 # Example of Functional Test
 
-The example of functional tests can look like below. It is pretty simplified to make it more readable.
+The example of functional tests can look like below. The testing method uses many helper methods to simplify test. In my opinion this is a key factor: create helper methods to make the code readable.
 
 ```java
 public class AccountFunctionalTest extends AbstractFunctionalTest {
@@ -182,15 +183,61 @@ public class AccountFunctionalTest extends AbstractFunctionalTest {
     var actual = getAccount("00000000-0000-0000-0000-000000000001");
     var expected = readFromResources("account_functional_test/get_account_dto.json");
     JSONAssert.assertEquals(expected, actual, JSONCompareMode.LENIENT);
+  }
+  
+  private void createAccount() {
+    var json = readFromResources("account_functional_test/create_account_dto.json");
+    ResponseEntity<String> response = getTestRestTemplate().exchange("/accounts",
+            HttpMethod.POST,
+            new HttpEntity<>(json, getPostHeaders()),
+            String.class);
+    assertThat(response.getStatusCodeValue()).isEqualTo(HttpStatus.CREATED.value());
+  }
+
+  private String getEtag(String id) {
+    ResponseEntity<String> response = getTestRestTemplate()
+      .getForEntity("/accounts/{id}", String.class, id);
+    return response.getHeaders().getETag();
+  }
+
+  private String getAccount(String id) {
+    ResponseEntity<String> response = getTestRestTemplate()
+      .getForEntity("/accounts/{id}", String.class, id);
+    return response.getBody();
+  }
+
+  private HttpHeaders getPostHeaders() {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    return headers;
+  }
+
+  private HttpHeaders getPatchHeaders(String etag) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(new MediaType("application", "merge-patch+json"));
+    headers.add(HttpHeaders.ETAG, etag);
+    return headers;
+  }
 }
 ```
 
 # Difference between Integration and Functional Tests
 If you read the previous article about [integration tests](2018-12-01-integration-tests-with-testcontainers.md) you may ask: what is actual difference?
-These two types of tests may be pretty similar. I can highlight the most important ones:
+These two types of tests may be pretty similar. I can highlight the most important differences:
 * in FunctionalTests you are not allowed to use any production code,
-* all actions need to be done by public interfaces of your system (don't create anything directly inside database),
+* all actions need to be done by public interfaces of your system (e.g. don't create anything directly inside database),
 * inside functional tests you should test happy paths, not corner cases. In contrast inside integration tests you can simulate e.g. timeouts, bad responses. etc. 
+
+# Advantages of Functional Tests
+For me, the biggest advantages of Functional Tests are:
+* We are able to test the service as black box. It means that that when you have a good functional tests coverage, you are able to make a deep refactoring without changing functional tests. 
+* It gives developers pretty big confidence that code does what it should do. 
+
+# Disadvantages of Functional Tests
+* I need to admit that writing functional tests can be time consuming. Especially when something doesn't work as expected, debugging became much harder.  
+* Because functional tests are running service and dependencies (like database, queues) as docker images, we need to run it at least once. Usually it slow. 
+* In ideal world we should run a new containers for each test. But it would be way too slow. So we need to run it once for all tests. If functional tests are written in a bad way, they can make tests interfering each other. 
+It is critical that tests uses different object identifiers, clean state after test. 
 
 # Summary 
 I find Functional Tests as very interesting concept. TestContainers library make it possible to use this concept inside java world. 
