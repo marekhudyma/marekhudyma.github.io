@@ -7,10 +7,11 @@ permalink: /about/
 My name is Marek Hudyma.
 I am Backend Developer who love coding and software architecture.
 
-You can message me on: 
+You can see my professional profile: 
 
 * [LinkedIn](https://www.linkedin.com/in/marek-hudyma/)
-* 
+* marek.hudyma@gmail.com 
+
 <div style='display:flex'>
 email: 
 <figure>
