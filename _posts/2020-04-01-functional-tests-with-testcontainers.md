@@ -50,7 +50,7 @@ ENTRYPOINT java --enable-preview ${ADDITIONAL_JAVA_OPTIONS} -jar application-sty
 ```
 
 ## Code separation 
-I recommend organizing code into a multi-module project with two modules: `service` and `functional-tests`. The `functiona-tests` module cannot have any dependency to `service`. 
+I recommend organizing code into a multi-module project with two modules: `service` and `functional-tests`. The `functional-tests` module cannot have any dependency to `service`. 
 ```
 .
 ├── service
