@@ -4,11 +4,9 @@ title: "What Uncle Bob says about methods"
 categories: code-style
 ---
 
-#What Uncle Bob says about methods
+# What Uncle Bob says about methods
 
-In this article I will present a summary of one chapter of a book:
-
-["Clean Code: A Handbook of Agile Software Craftsmanship"](https://www.oreilly.com/library/view/clean-code-a/9780136083238/)
+In this article I will present a summary of one chapter of a book: ["Clean Code: A Handbook of Agile Software Craftsmanship"](https://www.oreilly.com/library/view/clean-code-a/9780136083238/)
 written by Robert C. Martin also known as [Uncle Bob](https://en.wikipedia.org/wiki/Robert_C._Martin)
 The chapter that I will summarize is: `Chapter 3: Functions`.
 
