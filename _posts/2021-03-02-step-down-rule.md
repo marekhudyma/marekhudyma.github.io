@@ -76,7 +76,7 @@ Choose tab: `Arrangement`, check `Keep dependent methods together` and choose fr
 
 <figure>
   <img src="/assets/2021-04-01-step-down-rule/intellij_settings.jpg" alt="Intellij settings to use drop-down rule"> 
-  <figcaption>Intellij settings to use drop-down rule</figcaption>
+  <figcaption>Intellij settings to use step-down rule</figcaption>
 </figure>
 
 # Summary
