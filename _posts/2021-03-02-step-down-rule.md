@@ -49,8 +49,9 @@ public Campaign create(Campaign campaign) {
   }
 }
 
-private boolean isTimeRangeValid2(Campaign campaign) {
-  return isDateInPast(campaign.getActiveFrom()) && isDateInFuture(campaign.getActiveTill());
+private boolean isTimeRangeValid(Campaign campaign) {
+  return isDateInPast(campaign.getActiveFrom()) 
+     && isDateInFuture(campaign.getActiveTill());
 }
 
 private boolean isDateInPast(LocalDate localDate) {
