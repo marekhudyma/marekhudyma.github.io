@@ -72,7 +72,7 @@ The code above could be refactored even more, but I stopped here to show the gen
 Until now, I had been reordering methods manually.
 I can achieve the same automatically with IntelliJ settings.
 
-Click IntelliJ -> Preferences -> Editor -> Code Style -> Java
+Click `IntelliJ` -> `Preferences` -> `Editor` -> `Code Style` -> `Java`
 Choose tab: `Arrangement`, check `Keep dependent methods together` and choose from the drop-down: `depth-first order` option.
 
 <figure>
