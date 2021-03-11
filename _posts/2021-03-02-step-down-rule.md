@@ -20,7 +20,7 @@ It is not very important what it is. Let's say that it is important that two dat
 
 We can code the logic in the following way:
 
-```
+```java
 public Campaign create(Campaign campaign) {
   // activeFrom in past and activeTill in future 
   if (timeSource.getCurrentDate().isBefore(campaign.getActiveFrom())
@@ -40,7 +40,7 @@ For me, the code is not immediately clear and takes time to understand the high-
 In the operation of putting the whole logic into one method, we can split it into smaller ones. The method names tell us directly what the high-level goal is, so we can drop any comments.
 Additionally, we can simply scroll down and fluently read the methods. They are split into small chunks of logic, so it is easy to understand it and reuse it in a different part of the code.
 
-```
+```java
 public Campaign create(Campaign campaign) {
   if (!isTimeRangeValid(campaign)) {
     throw new OperationRejectedException("Wrong time range of campaign");
