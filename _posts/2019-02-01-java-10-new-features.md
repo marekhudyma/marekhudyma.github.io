@@ -6,7 +6,7 @@ categories: Java
 
 
 <figure>
-  <img src="/assets/2020-03-01-java-10-new-features/java10ready.png" alt="Java 10 ready">
+  <img src="/assets/2019-02-01-java-10-new-features/java10ready.png" alt="Java 10 ready">
 </figure>
 In this blog article, we will follow the new features of Java 10, released on 20 March 2018.
 
