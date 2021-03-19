@@ -30,7 +30,8 @@ if (n > 0) {
   then String is not being changed.
 }
 ```java
-String str = "Hello\nWorld!";System.out.println(str.indent(3));
+String str = "Hello\nWorld!";
+System.out.println(str.indent(3));
 ```
 Output:
 ```java
@@ -53,6 +54,7 @@ Utility Files gained a new method mismatch. Two files can have a mismatch in the
 
 * If the bytes are not identical. In this case, the position of the first mismatching byte is returned.
 * File sizes are not identical. In this case, the size of the smaller file is returned.
+
 ```java
 long mismatch = Files.mismatch(filePath1, filePath2);
 ```
