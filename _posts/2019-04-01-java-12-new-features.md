@@ -22,13 +22,15 @@ This release is another one in the row which extended String class.
 ## String.indent(int n)
 
 `indent(int n)` - this method adjusts the indentation of each line in the string based on the value of `n` and also normalizes line termination characters.
-if (n > 0) { 
-  then n spaces are inserted at the beginning of each line.
-} else if(n < 0) { 
-  then up to n white spaces are removed from the beginning of each line. If line doesn’t contain n lines, then all leading white spaces are removed.
-} else if (n == 0) { 
-  then String is not being changed.
-}
+
+<br />if (n > 0) { 
+<br />  then n spaces are inserted at the beginning of each line.
+<br />} else if(n < 0) { 
+<br />  then up to n white spaces are removed from the beginning of each line. If line doesn’t contain n lines, then all leading white spaces are removed.
+<br />} else if (n == 0) { 
+<br />  then String is not being changed.
+<br />}
+The yield statement exits the switch and returns the result of the current branch, similar to a return.}
 ```java
 String str = "Hello\nWorld!";
 System.out.println(str.indent(3));
