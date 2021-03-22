@@ -79,7 +79,25 @@ By using `record` you can still:
 By using `record` you `can't`:
 * extend a class nor can it be extended by another class,
 * be abstract,
-* 
+
+`Compact constructor` is a syntax that allows adding of some common logic, e.g. validation when `canonical constructor` is called.
+```java
+public record User(int id, String name) {
+  public User {
+    if(id< 100) {
+      throw new java.lang.IllegalArgumentException(String.format("Invalid id: %d",id));
+    }
+  }
+}
+```
+
+Explicit declaration of field accessor method:
+```java
+public String name() {
+  System.out.println(name);
+  return name;
+}
+```
 
 ## [JEP 358: Helpful NullPointerExceptions](https://openjdk.java.net/jeps/358)
 
@@ -90,7 +108,8 @@ int id = user.getId();
 ```
 Exception:
 ```java
-java.lang.NullPointerException: Cannot invoke "com.java.Java12$User.getId()" because "user" is null
+java.lang.NullPointerException: Cannot invoke "com.java.Java12$User.getId()"
+    because "user" is null
 ```
 
 ## [JEP 370: Foreign-Memory Access API (Incubator)](https://openjdk.java.net/jeps/370)
