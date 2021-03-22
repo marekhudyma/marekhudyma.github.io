@@ -13,11 +13,11 @@ Java 13 was released on 17 September 2019. Let's see what new features it provid
 # Syntax features
 
 ##[JEP 355: Text Blocks (Preview)](https://openjdk.java.net/jeps/355)
-The preview feature is multi-line Strings. In the past storing `JSON` as String required a lot of escaping like:
+The preview feature has multi-line Strings. In the past storing `JSON` as String required a lot of escaping like:
 ```java
 String JSON = "{\"version\": 13,\"language\": \"java\"}";
 ```
-With this feature, we can use multi-line Strings without need to escape double quotes or to add a carriage return:
+With this feature, we can use multi-line Strings without needing to escape double quotes or to add a carriage return:
 ```java
 String JSON2 = """
 {
@@ -74,7 +74,7 @@ Enhance ZGC to return unused heap memory to the operating system.
 
 ## [JEP 353: Reimplement the Legacy Socket API](https://openjdk.java.net/jeps/353)
 
-Replace the underlying implementation used by the `java.net.Socket` and `java.net.ServerSocket` APIs with a simpler and more modern implementation that is easy to maintain and debug.
+Replace the underlying implementation used by the `java.net.Socket` and `java.net.ServerSocket` APIs with a simpler and more modern implementation which is easy to maintain and debug.
 
 # Summary 
-Java 13 was for me a just another iteration of improvements without huge changes in stable features. 
+Java 13 was, for me, just another iteration of improvements without huge changes in stable features. 
