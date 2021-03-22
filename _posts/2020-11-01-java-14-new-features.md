@@ -77,7 +77,7 @@ By using `record` you can still:
 * implement interfaces.
 
 By using `record` you `can't`:
-* extend a class nor it can be extended by another class,
+* extend a class nor can it be extended by another class,
 * be abstract,
 * 
 
@@ -116,12 +116,8 @@ Improve G1 performance on large machines by implementing NUMA-aware memory alloc
 
 Here I will only mention the most important cleanings made in the JDK. 
 * `Concurrent Mark Sweep (CMS) Garbage Collector` ([JEP 363](https://openjdk.java.net/jeps/363)) – has been deprecated by `Java 9`, now has been removed.
-The recomendation is to use G1. Also there are other alternatives, e.g. `ZGC`, `Shenandoah`.
+The recommendation is to use G1. Also there are other alternatives, e.g. `ZGC`, `Shenandoah`.
 * `Pack200 Tools and API` ([JEP 367](https://openjdk.java.net/jeps/367)) – was deprecated by `Java 11`, now has been removed. 
 
-# Summary 
-Java 14 brought many preview features as standard. For me it will always stay in memory as version of Java which proposed experimental version of `records`.
-
-
-
-
+# Summary
+Java 14 brought many preview features as standard. For me, it will always stay in memory as the version of Java which proposed experimental version of `records`.
