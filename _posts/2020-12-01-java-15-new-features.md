@@ -14,10 +14,10 @@ Java 15 was released on March 17, 2020. Let's see its new features.
 
 ## [JEP 360: Sealed Classes (Preview)](https://openjdk.java.net/jeps/360)
 
-`Sealed classes` feature enable more fine-grained inheritance control. 
+`Sealed classes` feature enables more fine-grained inheritance control. 
 It allows to define allowed subtypes. 
-In the example below, we define a class `Shate` that permits be extended only by two subtypes: Circle and Rectangle.
-The `Circle` class extends Share and is marked as `non-sealed`.
+In the example below, we define a class `Shape` that permits be extended only by two subtypes: Circle and Rectangle.
+The `Circle` class extends `Shape` and is marked as `non-sealed`.
 The `Rectangle` class is marked as `sealed`, and permits to be extended only by class `YellowRectangle`.
 
 ```java
@@ -34,11 +34,11 @@ public sealed class Rectangle extends Shape permits YellowRectangle {
 }
 ```
 `Sealed classes` need to follow the rules:
-* Classes that extends `sealed classes` need to be marked as: 
+* Classes that extend `sealed classes` need to be marked as: 
     * `final` - so no other class can extend it, 
     * `sealed` - with list of classes that can extend it. 
     * `non-sealed` - open class for extension to everybody else.
-* All permitted subtypes need to belong to the same module as `sealed class`,
+* All permitted subtypes need to belong to the same module as `sealed class`.
 
 Interfaces also can use `sealed` syntax, example: 
 ```java
@@ -55,9 +55,9 @@ public sealed interface Rectangle extends Shape permits YellowRectangle {
 }
 ```
 
-One of the place where we can demonstrate `sealed classes` feature is pattern matching. 
-When we use it, the compiler knows that we covered all cases and we do not need to add else part. 
-Usually developers were throwing some Exception to highlite that there is some logical problem. 
+One of the places where we can demonstrate the `sealed classes` feature is pattern matching. 
+When we use it, the compiler knows that we covered all cases and we do not need to add another part. 
+Usually developers were throwing some Exception to highlight that there is some logical problem. 
 
 ```java
 if (shape instanceof Circle) {
@@ -92,7 +92,7 @@ Hidden classes are intended for use by frameworks that generate classes at run t
 
 ## [JEP 383: Foreign-Memory Access API (Second Incubator)](https://openjdk.java.net/jeps/383)
 Foreign memory access is already an incubating feature of Java 14.
-Introduce an API to allow Java programs to safely and efficiently access foreign memory outside of the Java heap.
+Introduced an API to allow Java programs to safely and efficiently access foreign memory outside of the Java heap.
 
 ## [JEP 377: ZGC: A Scalable Low-Latency Garbage Collector (Production)](https://openjdk.java.net/jeps/377) && 
 [JEP 379: Shenandoah: A Low-Pause-Time Garbage Collector (Production)](https://openjdk.java.net/jeps/379)
