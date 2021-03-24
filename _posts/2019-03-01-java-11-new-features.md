@@ -177,6 +177,10 @@ Deprecated Modules:
 * `Nashorn JavaScript engine`, including the JJS tool
 * `Pack200 compression schemes` for JAR files
 
+## [JEP 332: Transport Layer Security (TLS) 1.3](http://openjdk.java.net/jeps/332)
+
+The JDK 11 release includes an implementation of the Transport Layer Security (TLS) 1.3 specification [(RFC 8446)](https://tools.ietf.org/html/rfc8446).
+
 # Summary
 
 In this article we outlined the changes in Java 11. 
