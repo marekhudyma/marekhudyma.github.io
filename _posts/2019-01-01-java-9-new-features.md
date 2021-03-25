@@ -8,9 +8,9 @@ categories: Java
 <figure>
   <img src="/assets/2019-01-01-java-9-new-features/java9.jpg" alt="Java 9">
 </figure>
-In this blog article, we will follow the new features of Java 9, released on 21 September 2017.
-This Java version has a long story how voting committee discussed and changed their mind. 
-Because this release is very big, I will concentrate on technical aspects only.
+In this blog article, we follow the new features of Java 9, released on 21 September 2017. 
+This Java version has a long story on how the voting committee discussed and changed their minds. 
+As this release is quite large, I will concentrate on technical aspects only.
 
 # Java 9 syntax sugar
 
@@ -49,7 +49,7 @@ System.out.println(increment.apply(1));
 
 ## Interface Private Method
 From Java 9, interfaces can have private methods. 
-This way you can split logic to use smaller helper methods and use [Step down rule](2021-03-02-step-down-rule.md).
+This way, you can split logic to use smaller helper methods and use [step down rule](2021-03-02-step-down-rule.md).
 
 ```java
 interface Doable{  
@@ -81,7 +81,7 @@ List<String> chiffresImmutables = List.of("1", "2", "3", "4");
 
 ### or() method
 
-Java 9 introduces the `or() method` that returns another Optional lazily if our Optional is empty. 
+Java 9 introduces the `or() method` which returns another Optional lazily if our Optional is empty. 
 If our first Optional has a defined value, the lambda passed to the or() method will not be invoked, and value will not be calculated and returned.
 ```java
 Optional<String> optional1 = Optional.of("text1");
@@ -91,7 +91,7 @@ Optional<String> result = optional1.or(() -> optional2);
 ```
 
 ### ifPresentOrElse() method
-A new method `ifPresentOrElse()` was added Optional. You can execute action when value is inside and when it is empty. (example contains not-simplified syntax):
+A new method `ifPresentOrElse()` was added Optional. You can execute action when the value is inside and when it is empty. (example contains not-simplified syntax):
 
 ```java
 Optional<String> optional = Optional.of("text");
@@ -112,17 +112,17 @@ List<String> list = value.stream().map(String::toUpperCase).collect(Collectors.t
 ## Enhanced @Deprecated annotation
 
 In Java 8 end earlier versions, @Deprecated annotation is just a Marker interface without property.
-In Java 9, it has enhanced by two methods: `forRemoval(boolean)` and `since(String)` to serve this information.
+In Java 9, it is enhanced by two methods: `forRemoval(boolean)` and `since(String)` to serve this information.
 
 
 ## Multi-Resolution Image API
 
-In Java 9 introduced a new Multi-Resolution Image API. `MultiResolutionImage` encapsulates a set of images with different Height and Widths (that is different resolutions) and allows us to query them with our requirements.
+In Java 9 it introduced a new Multi-Resolution Image API. `MultiResolutionImage` encapsulates a set of images with different `heights` and `widths` (that is different resolutions) and allows us to query them with our requirements.
 
 ## Process API Improvements
 
 They have added couple of new classes and methods to ease the controlling and managing of OS processes.
-Two new interfcase in Process API:
+Two new interfaces in Process API:
 
 * `java.lang.ProcessHandle`
 * `java.lang.ProcessHandle.Info`
@@ -143,7 +143,7 @@ new CompletableFuture().defaultExecutor()
 CompletableFuture<T> completeAsync(Supplier<? extends T> supplier, Executor executor)
 CompletableFuture<T> completeAsync(Supplier<? extends T> supplier)
 ```
-The difference between this two overloaded methods is the existence of the second argument, where the Executor running the task can be specified. If none is provided, the default executor (returned by the defaultExecutor method) will be used.
+The difference between these two overloaded methods is the existence of the second argument, where the Executor running the task can be specified. If none is provided, the default executor (returned by the defaultExecutor method) will be used.
 
 ### delay
 
@@ -200,11 +200,11 @@ module commons.lang3 {
 Keywords:
 * `module` - the module definition file starts with this keyword followed by its name and definition,
 * `requires` - indicates that this module depends on another module, 
-* `requires transitive <module name>` - this means that any module that reads your module implicitly also reads the transitive module,
+* `requires transitive <module name>` - this means that any module that reads your module implicitly, also reads the transitive module,
 * `exports` - indicates which public types of the module's package are accessible to other modules,
 * `opens` - indicates which public types of the module's package are accessible to other modules only `runtime` via Reflection APIs,
 * `uses <class/interface name>` - indicates which service class/interface that this module is using
-* `provides <interface> with <implementation>` - indicate that it provides `implementation` for `interface`
+* `provides <interface> with <implementation>` - indicates that it provides `implementation` for `interface`
 
 The `java.base module` contains commonly used JDK APIs like Utils, Collections, IO, Concurrency among others.
 The dependency graph of the JDK modules is:
@@ -216,7 +216,7 @@ The dependency graph of the JDK modules is:
 
 * `jdeps` – analyzes the code base to identify the dependencies on JDK APIs and the third party JARs,
 * `jdeprscan` – analyzes the code base for usage of any deprecated APIs,
-* `jlink` – creates a smaller runtime by combining the application's and the JDK's modules
+* `jlink` – creates a smaller runtime by combining the applications and the JDK's modules
 * `jmod` – helps in working with jmod files. jmod is a new format for packaging the modules. This format allows including native code, configuration files, and other data that do not fit into JAR files.
 
 ## [JEP 222: jshell: The Java Shell (Read-Eval-Print Loop](https://openjdk.java.net/jeps/222)
