@@ -52,7 +52,7 @@ Integer[] array = myList.toArray(Integer[]::new);
 
 ## Stream Predicate NOT
 
-A new stream predicate not has been introduced, example:
+A new stream predicate `not` has been introduced, example:
 ```java
 List<String> listWithoutEmpty = listOfString.stream() 
     .filter(not(String::isEmpty)) 
