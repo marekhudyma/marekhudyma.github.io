@@ -26,7 +26,7 @@ if (obj instanceof String s && s.length() > 5) {
 ## [JEP 395: Records](https://openjdk.java.net/jeps/395)
 
 `Records` were introduced in `Java 14` and again in `Java 15`. In `Java 16`, it became a production feature.
-According to `JEP` documentation, the mail purpose of records is not to reduce boiler plate code. 
+According to `JEP` documentation, the main purpose of records is not to reduce boiler plate code. 
 The main goal is to provide truly immutable objects. Example of usage:
 
 ```java
@@ -49,7 +49,7 @@ record MerchantSales(Merchant merchant, double sales) {}
 ## [JEP 376: ZGC: Concurrent Thread-Stack Processing](https://openjdk.java.net/jeps/376)
 
 This feature moves ZGC thread-stack processing from safepoints to a concurrent phase, allows sub-millisecond pauses inside GC safepoints, even on large heaps.
-Removing the final source of latency in the ZGC garbage collector will greatly improve performance and efficiency of applications in this and subsquent releases.
+Removing the final source of latency in the ZGC garbage collector will greatly improve performance and efficiency of applications in this and subsequent releases.
 
 ## [JEP 387: Elastic Metaspace](https://openjdk.java.net/jeps/387)
 
@@ -73,7 +73,7 @@ This offers an initial iteration of an incubator module, to express vector compu
 
 ## [JEP 389: Foreign Linker API (Incubator)](https://openjdk.java.net/jeps/389)
 
-This incubator API offers statically-typed, pure-Java access to native code
+This incubator API offers statically-typed, pure-Java access to native code.
 
 ## [JEP 393: Foreign-Memory Access API (Third Incubator)](https://openjdk.java.net/jeps/393)
 
