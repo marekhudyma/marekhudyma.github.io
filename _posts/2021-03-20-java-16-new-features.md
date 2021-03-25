@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Java 15 new features"
+title: "Java 16 new features"
 categories: Java
 ---
 
@@ -91,3 +91,5 @@ This allows the use of C++14 language features in `JDK C++ source code` and give
 
 These JEPs migrate the OpenJDK Community's source code repositories from Mercurial to Git and host them on GitHub for JDK 11 and later.
 
+# Summary 
+`Java 16` release mostly accepted production features. Extended previews I expect to see merged in `Java 17` that will be `Long Term Support`.
