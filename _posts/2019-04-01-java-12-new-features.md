@@ -37,7 +37,8 @@ System.out.println(str.indent(3));
 ```
 Output:
 ```java
-Hello World!
+   Hello 
+   World!
 ```
 
 ## String.transform(Function<? super String, ? extends R> f)

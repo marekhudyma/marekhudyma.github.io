@@ -105,8 +105,10 @@ optional.ifPresentOrElse(
 ### The stream() Method
 Optional got a new method `stream()` that allows us to treat the Optional instance as a Stream.
 ```java
-Optional<String> value = Optional.of("text");
-List<String> list = value.stream().map(String::toUpperCase).collect(Collectors.toList());
+Optional<String> optional = Optional.of("text");
+List<String> list = optional.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
 ```
 
 ## Enhanced @Deprecated annotation
@@ -159,7 +161,7 @@ Java 9 supports the Reactive Streams initiative by providing a publish-subscribe
 Reactive Streams is a standard for asynchronous stream processing with non-blocking back pressure.
 This specification is defined in the Reactive Manifesto, and there are various implementations of it, for example, RxJava or Akka-Streams.
 
-Flow is a repository for four nested static interfaces whose methods establish flow-controlled components in which publishers produce data items that are consumed by one or more subscribers:
+`Flow` is a repository for four nested static interfaces whose methods establish flow-controlled components in which publishers produce data items that are consumed by one or more subscribers:
 * `Publisher` - A producer of data items that are received by subscribers,
 * `Subscriber` - A receiver of data items,
 * `Subscription` - Linkage between a Publisher and a Subscriber,
@@ -219,7 +221,7 @@ The dependency graph of the JDK modules is:
 * `jlink` – creates a smaller runtime by combining the applications and the JDK's modules
 * `jmod` – helps in working with jmod files. jmod is a new format for packaging the modules. This format allows including native code, configuration files, and other data that do not fit into JAR files.
 
-## [JEP 222: jshell: The Java Shell (Read-Eval-Print Loop](https://openjdk.java.net/jeps/222)
+## [JEP 222: jshell: The Java Shell (Read-Eval-Print Loop)](https://openjdk.java.net/jeps/222)
 
 Provide an interactive tool to evaluate declarations, statements, and expressions of the Java programming language, together with an API so that other applications can leverage this functionality.
 
