@@ -109,6 +109,8 @@ and better control memory settings:
 
 Read more [here](https://www.docker.com/blog/improved-docker-container-integration-with-java-10/) and [here](https://medium.com/@jnsrikanth/docker-support-in-java-10-fbff28a31827).
 
+This feature has been backported to `Java 8` as well, read [here](https://merikan.com/2019/04/jvm-in-a-container/).
+
 # [JEP 319: Root Certificates](http://openjdk.java.net/jeps/319)
 
 With Java 10, Oracle has open-sourced the root certificates in Oracle's Java SE Root CA program in order to make OpenJDK builds more attractive to developers and to reduce the differences between those builds and Oracle JDK builds.
