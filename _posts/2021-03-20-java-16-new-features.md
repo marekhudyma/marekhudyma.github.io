@@ -93,3 +93,4 @@ These JEPs migrate the OpenJDK Community's source code repositories from Mercuri
 
 # Summary 
 `Java 16` release mostly accepted production features. Extended previews I expect to see merged in `Java 17` that will be `Long Term Support`.
+I am counting down till [Java 17 release date](https://is.java.released.info)
