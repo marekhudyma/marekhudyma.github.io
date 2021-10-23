@@ -7,7 +7,7 @@ categories: tests
 In this article, you will find information on:
 * How to write functional tests with testcontainers.org library. 
 Before you read this article, I highly recommend first reading the one about [integration tests](2018-12-01-integration-tests-with-testcontainers.md)
-You can follow a working example of the idea [here] (https://github.com/marekhudyma/application-style).
+You can follow a working example of the idea [here](https://github.com/marekhudyma/application-style).
 
 # Definition
 
