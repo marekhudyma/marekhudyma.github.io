@@ -9,7 +9,7 @@ layout: default
 <div class="wrapper">
   <div class="row">
 
-    <div class="column column--center medium-10 large-10">
+    <div class="{% if page.type contains 'post' %} column column--center medium-10 large-10 {% endif %}">
       <article class="post post--no-image" itemscope itemtype="http://schema.org/BlogPosting">
 
         <header class="text-center post__header">
