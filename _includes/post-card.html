@@ -3,7 +3,7 @@
   <div class="post-card {% if post.featured %} post-card--featured {% endif %}">
 
     <a href="{{ post.url | prepend: site.baseurl }}" class="block">
-      <div class="post-card__image CoverImage {% if post.type contains 'presentation' %} Presentation {% endif %} FlexEmbed FlexEmbed--4by3" style="background-image: url({{ post.image | prepend: site.baseurl }})">
+      <div class="post-card__image CoverImage FlexEmbed FlexEmbed--4by3" style="background-image: url({{ post.image | prepend: site.baseurl }})">
         {% if post.featured %}
         <span title="Featured Post">
           <span class="post-card--featured__icon" data-icon="ei-star" data-size="s"></span>
@@ -26,9 +26,3 @@
 
   </div>
 </article>
-
-<style type="text/css">
-  .Presentation {
-    background-position: 0 50% !important;
-  }
-</style>
