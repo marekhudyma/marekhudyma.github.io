@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Concurrent calls"
+featured: false
+author: marek
 categories: sql
+type: post
+image: '/assets/2018-11-01-concurrent_calls/transactions_concurrent_calls.jpg'
+comments: false
 ---
 
 In this article, you will find information on:

@@ -1,14 +1,24 @@
 ---
 layout: default
 ---
-<article class="post">
 
-  <header class="post-header">
-    <h1 class="post-title">{{ page.title | escape }}</h1>
-  </header>
+<div class="wrapper">
 
-  <div class="post-content">
-    {{ content }}
-  </div>
+  <div class="row">
+    <div class="column column--center medium-10 large-10">
 
-</article>
+      <article class="post post--no-image">
+
+        <header class="text-center post__header">
+          <h1 class="post-title">{{ page.title }}</h1>
+        </header>
+
+        <div class="post-content">
+          {{ content }}
+        </div>
+
+      </article>
+    </div>
+
+  </div> <!-- row-->
+</div> <!-- wrapper -->

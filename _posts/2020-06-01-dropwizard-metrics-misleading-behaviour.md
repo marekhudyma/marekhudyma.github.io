@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Dropwizard Metrics - misleading behaviour"
+featured: false
+author: marek
 categories: Dropwizard,Metrics
+type: post
+image: '/assets/2020-06-01-dropwizard-metrics-misleading-behaviour/oneMinuteRate_100.png'
+comments: false
 ---
 
 In this article, you will find information on:

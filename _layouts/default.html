@@ -1,21 +1,36 @@
 <!DOCTYPE html>
 <html lang="{{ page.lang | default: site.lang | default: "en" }}">
 
-  {%- include head.html -%}
+{% include head.html %}
 
-  <body>
+<style type="text/css">
+  .post-content figure img {
+    margin-bottom: 0 !important;
+  }
+  figure figcaption {
+    text-align: center;
+    font-style: italic;
+    font-size: 16px;
+    color: #787878;
+  }
+</style>
 
-    {%- include header.html -%}
-    {% include analytics.html %}
+<body>
 
-    <main class="page-content" aria-label="Content">
-      <div class="wrapper">
-        {{ content }}
-      </div>
-    </main>
+  {% include analytics.html %}
 
-    {%- include footer.html -%}
+  <div class="off-canvas-container">
+    {% include header.html %}
 
-  </body>
+    {{ content }}
+
+    {% include footer.html %}
+  </div>
+
+  <script src="{{ '/js/jquery-2.1.4.min.js' | prepend: site.baseurl }}"></script>
+  <script src="{{ '/js/evil-icons.min.js' | prepend: site.baseurl }}"></script>
+  <script src="{{ '/js/jquery.fitvids.js' | prepend: site.baseurl }}"></script>
+  <script src="{{ '/js/script.js' | prepend: site.baseurl }}"></script>
+</body>
 
 </html>

@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "The step-down rule"
+featured: false
+author: marek
 categories: code-style
+type: post
+image: '/assets/2021-04-01-step-down-rule/intellij_settings.jpg'
+comments: false
 ---
 
 The step-down rule is one of my favorite rules presented by [Uncle Bob](https://en.wikipedia.org/wiki/Robert_C._Martin) in his book ["Clean Code: A Handbook of Agile Software Craftsmanship"](https://www.oreilly.com/library/view/clean-code-a/9780136083238/).

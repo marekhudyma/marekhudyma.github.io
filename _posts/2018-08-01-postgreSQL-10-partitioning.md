@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "PostgreSQL 10 table partitioning"
+featured: false
+author: marek
 categories: sql
+type: post
+image: '/assets/2018-08-01-postgreSQL-10-partitioning/horizontal.png'
+comments: false
 ---
 
 In this article, you will find information on: 

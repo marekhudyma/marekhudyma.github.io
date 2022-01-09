@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java 15 new features"
+featured: false
+author: marek
 categories: Java
+type: post
+image: '/assets/2020-12-01-java-15-new-features/java15.png'
+comments: false
 ---
 
 <figure>

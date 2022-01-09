@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java 12 new features"
+featured: false
+author: marek
 categories: Java
+type: post
+image: '/assets/2019-04-01-java-12-new-features/java12.png'
+comments: false
 ---
 
 <figure>

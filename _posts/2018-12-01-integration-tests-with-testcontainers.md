@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Integration tests with testcontainers.org library and Spring Boot"
+featured: false
+author: marek
 categories: tests
+type: post
+image: '/assets/2018-12-01-integration-tests-with-testcontainers/cover.png'
+comments: false
 ---
 
 In this article, you will find information on:

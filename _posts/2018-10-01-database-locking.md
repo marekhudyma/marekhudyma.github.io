@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Database locking"
+featured: false
+author: marek
 categories: sql
+type: post
+image: '/assets/2018-10-01-database-locking/transactions_without_locking.png'
+comments: false
 ---
 
 In this article, you will find information on: 

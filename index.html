@@ -1,0 +1,15 @@
+---
+layout: default
+---
+
+<div class="wrapper">
+  <div class="row">
+    <div class="post-list">
+      {% for post in site.posts %}
+      {% if post.type contains 'post' %} 
+        {% include post-card.html %}
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
