@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "What Uncle Bob says about methods"
+featured: false
+author: marek
 categories: code-style
+type: post
+image: '/assets/2021-03-01-uncle-bob-about-functions/250w.png'
+comments: false
 ---
 
 # Introduction

@@ -1,27 +1,57 @@
 ---
 layout: default
 ---
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <header class="post-header">
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-        {{ page.date | date: date_format }}
-      </time>
-      {%- if page.author -%}
-        • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{{ page.author }}</span></span>
-      {%- endif -%}</p>
-  </header>
+{% include base_path %}
 
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
-  </div>
+{% assign author = site.authors[page.author] %}
 
-  {%- if site.disqus.shortname -%}
-    {%- include disqus_comments.html -%}
-  {%- endif -%}
+<div class="wrapper">
+  <div class="row">
 
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
-</article>
+    <div class="column column--center medium-10 large-10">
+      <article class="post post--no-image" itemscope itemtype="http://schema.org/BlogPosting">
+
+        <header class="text-center post__header">
+          <h2 class="post__title" itemprop="name headline">{{ page.title }}</h2>
+          <time class="post__date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">{{ page.date | date: "%b %-d, %Y" }}</time>
+        </header>
+
+        {% if page.type contains 'presentation' %} 
+        <iframe style="margin-bottom: 32px;" width="100%" height="550" src="{{ page.iframe }}" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" allowfullscreen> </iframe>
+        {% endif %}
+
+        <div class="post-content" itemprop="articleBody">
+          {{ content }}
+        </div>
+
+        <div class="row">
+          <div class="column large-10">
+            <div class="post__tags">
+              {% for tag in page.tags %}
+                <a href="{{ site.baseurl }}/tag/{{ tag | slugify }}">{{ tag }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="column large-2">
+            {% include share.html %}
+          </div>
+        </div>
+
+        {% if page.author %}
+          <hr>
+          {% include author.html %}
+        {% endif %}
+
+        {% if page.comments %}
+          <hr>
+          {% include disqus.html %}
+        {% endif %}
+
+        <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+
+      </article>
+    </div>
+
+  </div> <!-- row-->
+</div> <!-- wrapper -->

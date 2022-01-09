@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java 9 new features"
+featured: false
+author: marek
 categories: Java
+type: post
+image: '/assets/2019-01-01-java-9-new-features/java9.png'
+comments: false
 ---
 
 

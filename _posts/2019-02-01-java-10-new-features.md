@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java 10 new features"
+featured: false
+author: marek
 categories: Java
+type: post
+image: '/assets/2019-02-01-java-10-new-features/Java10.jpg'
+comments: false
 ---
 
 

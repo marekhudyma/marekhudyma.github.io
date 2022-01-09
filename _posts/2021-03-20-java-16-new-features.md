@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java 16 new features"
+featured: false
+author: marek
 categories: Java
+type: post
+image: '/assets/2021-04-01-java-16-new-features/java16.jpg'
+comments: false
 ---
 
 <figure>

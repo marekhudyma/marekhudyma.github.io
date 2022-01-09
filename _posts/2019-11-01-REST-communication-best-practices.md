@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "REST communication best practices"
+featured: false
+author: marek
 categories: REST,microservices
+type: post
+image: '/assets/2019-11-01-REST-communication-best-practices/architecture_trend_2019.jpg'
+comments: false
 ---
 
 In this article, you will find information on:

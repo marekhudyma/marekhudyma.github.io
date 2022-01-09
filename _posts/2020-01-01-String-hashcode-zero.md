@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Java String.hashCode() equal to zero"
+featured: false
+author: marek
 categories: JDK,Java,String
+type: post
+image: ''
+comments: false
 ---
 
 In this article, you will find information on:

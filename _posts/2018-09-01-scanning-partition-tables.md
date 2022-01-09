@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Scanning partitioned tables in PostgreSQL 10"
+featured: false
+author: marek
 categories: sql
+type: post
+image: '/assets/2018-09-01-scanning-partition-tables/execution_plan_now.png'
+comments: false
 ---
 
 In this article, you will find information on: 

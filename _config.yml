@@ -1,43 +1,63 @@
-title: Marek Hudyma's blog
-author: Marek Hudyma
-description: > # this means to ignore newlines until "twitter_username:"
-#  The best blog ever.
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
 
-# social links
-github_username:  marekhudyma
+# Site settings
+title:              Marek Hudyma's blog
+author:             Marek Hudyma
+description:
+url:                'https://marekhudyma.com/' # The base hostname & protocol for your site
+github_username:    marekhudyma
+linkedin_username:  marek-hudyma
+email:              marek.hudyma@gmail.com
 rss: rss
-# dribbble_username: jekyll
-# facebook_username: jekyll
-# flickr_username: jekyll
-# instagram_username: jekyll
-# linkedin_username: jekyll
-# pinterest_username: jekyll
-# youtube_username: jekyll
-# googleplus_username: +jekyll
 
-# Mastodon instances
-# mastodon:
-# - username: jekyll
-#   instance: example.com
-# - username: jekyll2
-#   instance: example.com
-
-
-show_excerpts: false # set to true to show excerpts on the homepage
-
-# Minima date format
-# refer to http://shopify.github.io/liquid/filters/date/ if you want to customize this
-minima:
-  date_format: "%Y-%m-%d"
-
-# If you want to link only specific pages in your header, uncomment
-# this and add the path to the pages in order as they should show up
-#header_pages:
-# - about.md
-
-# Build settings
-theme: minima
+markdown:  kramdown
+permalink: /:categories/:year/:month/:day/:title.html
+sass:
+  style: compressed
 
 plugins:
- - jekyll-feed
- - jekyll-seo-tag
+  - jekyll/tagging
+
+include:
+  - _pages
+
+exclude:
+  - vendor
+  - Gemfile
+  - Gemfile.lock
+
+# Tags
+tag_page_dir:         tag
+tag_page_layout:      tag_page
+tag_permalink_style:  pretty
+
+# Pages path
+defaults:
+  - scope:
+      path: '_pages'
+    values:
+      permalink: /:basename:output_ext
+
+# Authors
+authors:
+  marek:
+    name:             Marek Hudyma
+    bio:              My name is Marek Hudyma. I am Backend Developer who love coding and software architecture.
+    gravatar:         '/assets/about/5b94db56.jpg'
+
+
+############################################################
+# Site configuration for the Jekyll 3 Pagination Gem
+# The values here represent the defaults if nothing is set
+# see: https://github.com/sverrirs/jekyll-paginate-v2/blob/master/README-GENERATOR.md
+# pagination:
+#   enabled: true
+#   debug: false
+#   per_page: 12
+#   sort_field: 'date'
+#   sort_reverse: true

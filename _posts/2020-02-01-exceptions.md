@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Usage of exceptions in business applications"
+featured: false
+author: marek
 categories: Java,Exceptions
+type: post
+image: '/assets/2020-02-01-exceptions/java_the_complete_reference_tenth_edition.jpg'
+comments: false
 ---
 
 In this article, you will find information on:

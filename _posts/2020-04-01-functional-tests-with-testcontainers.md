@@ -1,7 +1,12 @@
 ---
 layout: post
 title: "Functional tests with testcontainers.org library and Spring Boot"
+featured: false
+author: marek
 categories: tests
+type: post
+image: '/assets/2020-04-01-functional-tests-with-testcontainers/functional_tests.png'
+comments: false
 ---
 
 In this article, you will find information on:
