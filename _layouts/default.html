@@ -22,9 +22,12 @@
   <div class="off-canvas-container">
     {% include header.html %}
 
-    {{ content }}
+    <div class="page-content">
+      {{ content }}
 
-    {% include footer.html %}
+      {% include footer.html %}
+    </div>
+    
   </div>
 
   <script src="{{ '/js/jquery-2.1.4.min.js' | prepend: site.baseurl }}"></script>
