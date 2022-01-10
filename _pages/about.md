@@ -18,7 +18,8 @@ permalink: /about/
         line-height: 36px;
         display: flex;
         align-items: center;
-        flex-direction: column
+        flex-direction: column;
+        text-align: center
     }
     .info {
         margin-top: 32px
@@ -41,6 +42,37 @@ permalink: /about/
     }
     .profile + ul .icon:hover {
         fill: #777 !important
+    }
+
+    @media only screen and (max-width: 530px) {
+        .image {
+            width: 350px;
+            height: 350px;
+        }
+    }
+    @media only screen and (max-width: 450px) {
+        .image {
+            width: 300px;
+            height: 300px;
+        }
+    }
+    @media only screen and (max-width: 380px) {
+        .image {
+            width: 250px;
+            height: 250px;
+        }
+    }
+    @media only screen and (max-width: 310px) {
+        .image {
+            width: 200px;
+            height: 200px;
+        }
+    }
+    @media only screen and (max-width: 250px) {
+        .image {
+            width: 150px;
+            height: 150px;
+        }
     }
 </style>
 
