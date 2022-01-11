@@ -27,15 +27,15 @@
     a {
       display: inline;
       border-bottom: none;
-      transition: $base-transition-speed;
-      background-image: linear-gradient(180deg, transparent 65%, #FFF5D1 0);
-
-      background-size: 0 100%;
-      background-repeat: no-repeat;
-      transition: background-size .5s ease;
+      // transition: $base-transition-speed;
+      // background-image: linear-gradient(180deg, transparent 65%, #FFF5D1 0);
+      // background-size: 0 100%;
+      // background-repeat: no-repeat;
+      // transition: background-size .5s ease;
 
       &:hover {
-        color: $color__type; background-size: 100% 100%;
+        color: $color__type;
+        // background-size: 100% 100%;
       }
     }
   }

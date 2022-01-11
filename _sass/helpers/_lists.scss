@@ -10,4 +10,9 @@
   margin: 0;
   padding: 0;
   @extend .no-bullets;
+
+  @media #{$medium-down} {
+    padding-top: 16px;
+    text-align: left
+  }
 }

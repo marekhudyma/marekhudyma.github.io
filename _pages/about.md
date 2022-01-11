@@ -8,7 +8,7 @@ permalink: /about/
     .image {
         border-radius: 50%;
         overflow: hidden;
-        background: transparent url('/assets/about/5b94db56.jpg') no-repeat 50% 50%;
+        background: transparent url('/assets/about/5b94db56.png') no-repeat 50% 50%;
         width: 400px;
         height: 400px;
         background-size: cover;
