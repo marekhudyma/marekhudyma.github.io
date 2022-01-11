@@ -10,11 +10,11 @@
   @media #{$medium-down} { line-height: $line-height__medium; }
 
   a {
-    transition: $base-transition-speed;
+    // transition: $base-transition-speed;
     text-decoration: none;
     letter-spacing: 1px;
 
-    &:hover { color: $color__type--hover; }
+    &:hover { color: $color__type !important }
   }
 
   &__img {

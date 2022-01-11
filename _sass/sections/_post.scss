@@ -23,15 +23,20 @@
 
   &__header {
     margin-bottom: half($line-height__medium);
+    h1 {
+      font-size: 32px;
+      font-weight: bold;
+    }
   }
 
   &__title {
     margin-bottom: half($line-height__medium);
-    font-size: double($font-size__tiny);
+    font-size: 32px;
+    font-weight: bold;
 
-    @media #{$large-up} {
-      font-size: double($font-size__medium);
-    }
+    // @media #{$large-up} {
+    //   font-size: 32px;
+    // }
   }
 
   &__date {
@@ -44,15 +49,15 @@
 
   &-content {
     a {
-      background-image: linear-gradient(to bottom, $color__type, $color__type);
+      // background-image: linear-gradient(to bottom, $color__type, $color__type);
       text-shadow: -1px -1px 0 #FDFDFD, 1px -1px 0 #FDFDFD, -1px 1px 0 #FDFDFD, 1px 1px 0 #FDFDFD;
-      background-repeat: repeat-x;
-      background-size: 1px 1px;
-      background-position: 0 96%;
+      // background-repeat: repeat-x;
+      // background-size: 1px 1px;
+      // background-position: 0 96%;
       text-decoration: none;
 
       &:hover {
-        background-image: linear-gradient(to bottom, $color__type--hover, $color__type--hover);
+        // background-image: linear-gradient(to bottom, $color__type--hover, $color__type--hover);
       }
     }
   }
