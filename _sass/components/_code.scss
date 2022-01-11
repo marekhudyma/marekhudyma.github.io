@@ -6,7 +6,7 @@ pre,
 code {
   font-family: $font__monospace;
   font-size: $font-size__medium;
-  background-color: $grey-bg;
+  background-color: #f1f1f1 !important;
 }
 
 // Code block
@@ -14,7 +14,7 @@ code {
 pre {
   overflow: auto;
   margin-top: 0;
-  margin-bottom: $line-height__base;
+  margin-bottom: $line-height__base !important;
   padding: $line-height__base;
 
   font-size: $font-size__medium;
