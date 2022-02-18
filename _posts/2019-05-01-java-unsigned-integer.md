@@ -9,6 +9,10 @@ image: '/assets/2019-05-01-java-unsigned-integer/binary_notes.jpeg'
 comments: false
 ---
 
+<figure>
+  <img src="/assets/2019-05-01-java-unsigned-integer/binary_notes.jpeg" alt="Java unsigned integer header" />
+</figure>
+
 # Introduction
 
 In most modern programming languages, there are `signed` and `unsigned` numeric types, eg. `unsigned int` in C++ or `uint` in C#.
@@ -16,19 +20,21 @@ Java did not introduce unsigned types! The most probable reason is to make Java 
 What if we really need to use `unsigned integer` or `unsigned long`? There is a work around that I will explain in this article. Before we do it, let's understand how integer numbers are represented internally.
 
 ## Motivation
-I would divide a `need` of having unsigned integer type to two cases:
-* make a logical representation of items (for example to represent number of wheels in the car. For most cases unsigned integer is a perfect choice). I will not consider this case, because it is more philosophical than technical.
-* technical aspect. I will concentrate on this side of the problem.
-
 For many years of development in Java I rarely got a need to use unsigned integers, from technical point of view.
-If we loose 1 bit from 32, it is not a big deal. If `Integer` is too small, we can use `Long` with `Long.MAX_VALUE` equal `nine quintillion` (`9223372036854775807`).
+If we loose 1 bit from 32, it is not a big deal. If `Integer` is too small, we can use `Long` with `Long.MAX_VALUE` that is equal to `nine quintillion` (`9223372036854775807`).
 When `Long` type is not enough, we can still use `BigInteger` with theoretical unlimited size.
+
+I would divide a `need` of having unsigned integer type to two cases:
+* make a logical representation of items, for example to represent number of wheels in the car. 
+For most cases unsigned integer is a perfect choice. What would it mean that car has -2 wheels? In fact, we use signed integer for it.
+Whereas, I would like to avoid a philosophical discussion `if` we need unsigned integers to properly represent our models.
+* technical aspects.
 
 I find it useful to have unsigned integers in 2 areas:
 * when we make low level (electronic) operations,
-* when we need really high performant operations on `unsigned integer` (memory and speed) during mathematical calculations. This was my initial motivation to investigate the topic.
-  I believe, that you as a Reader can find more cases where unsigned integer is required.
-
+* when we need really high performant operations on `unsigned integer` (memory and speed) during mathematical calculations. This was my initial motivation to investigate the topic. 
+I believe, that you as a Reader can find more cases where unsigned integer is required.
+  
 ## Binary format
 
 As we know, computer uses [binary format](https://en.wikipedia.org/wiki/Binary_number) to represent numbers.
