@@ -71,9 +71,10 @@ The negative numbers are represented by inverting 1's to 0's and vice versa for 
 ```
 
 For example: Let's build `-5` from `5` number:
-`0101` = `5`
-`1010` (inverted values)
-`1011` (added 1 to inverted values) = -5
+
+`0101` = `5` <br />
+`1010` (inverted values) <br />
+`1011` (added 1 to inverted values) = -5 <br />
 
 For 4 bits all the numbers represented in two's complement form looks like:
 ```
@@ -96,7 +97,7 @@ For 4 bits all the numbers represented in two's complement form looks like:
 ```
 
 What is worth to mention:
-* we have values from `-8` to `+7`, (accordingly: `Integer.MAX_VALUE` = `2_147_483_647`, `Integer.MIN_VALUE` = `-2_147_483_648`) - I have one more negative value than positive.
+* we have values from `-8` to `+7`, (accordingly: `Integer.MAX_VALUE` = `2_147_483_647`, `Integer.MIN_VALUE` = `-2_147_483_648`) - there is one more negative value than positive.
 * in contrast to [Ones' complement](https://en.wikipedia.org/wiki/Ones%27_complement) representation, we have only one `zero value`.
 
 ## Adding numbers
@@ -141,7 +142,7 @@ System.out.println("decimal value = " + value);
 System.out.println("binary representation = " + Integer.toUnsignedString(value, 2));
 System.out.println("unsigned decimal representation = " + Integer.toUnsignedString(value));
 ```
-the out is:
+output:
 ```java
 decimal value = -1
 binary representation = 11111111111111111111111111111111
@@ -160,7 +161,7 @@ System.out.println("decimal value = " + value);
 System.out.println("binary representation = " + Integer.toUnsignedString(value, 2));
 System.out.println("unsigned decimal representation = " + Integer.toUnsignedString(value));
 ```
-the out is:
+output:
 ```java
 decimal value = -294967296
 binary representation = 11101110011010110010100000000000
@@ -180,7 +181,7 @@ System.out.println("decimal value = " + value);
 System.out.println("binary representation = " + Integer.toUnsignedString(value, 2));
 System.out.println("unsigned decimal representation = " + Integer.toUnsignedString(value));
 ```
-the out is:
+output:
 ```java
 decimal value = -294967296
 binary representation = 11101110011010110010100000000000
@@ -198,7 +199,7 @@ System.out.println("decimal value = " + value);
 System.out.println("binary representation = " + Integer.toUnsignedString(value, 2));
 System.out.println("unsigned decimal representation = " + Integer.toUnsignedString(value));
 ```
-the out is:
+output:
 ```java
 decimal value = 2000000000
 binary representation = 1110111001101011001010000000000
@@ -214,7 +215,7 @@ UnsignedInteger value = UnsignedInteger.valueOf(2_000_000_000);
 value = value.times(UnsignedInteger.valueOf(2));
 System.out.println(value);
 ```
-the out is:
+output:
 ```
 4000000000
 ```
