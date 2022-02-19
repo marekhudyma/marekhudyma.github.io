@@ -31,8 +31,9 @@ Whereas, I would like to avoid a philosophical discussion `if` we need unsigned 
 * technical aspects.
 
 I find it useful to have unsigned integers in 2 areas:
-* when we make low level (electronic) operations,
+* when we make low level operations, eg. integration with electronic devices, 
 * when we need really high performant operations on `unsigned integer` (memory and speed) during mathematical calculations. This was my initial motivation to investigate the topic. 
+
 I believe, that you as a Reader can find more cases where unsigned integer is required.
   
 ## Binary format
@@ -54,10 +55,10 @@ First bit determines the sign. `0` means that number is positive. To represent t
 Examples:
 
 `0011` = `0` on the left means that number is positive <br />
-&nbsp;&nbsp;`011` value is equal to: 0<sup>2</sup> + 1<sup>1</sup> + 1<sup>0</sup> = `3` <br />
+&nbsp;&nbsp;`011` value is equal to: 0<sup>2</sup> + 2<sup>1</sup> + 2<sup>0</sup> = `3` <br />
 
 `0101` = `0` on the left means that number is positive <br />
-&nbsp;&nbsp;`101`value is equal to: 1<sup>2</sup> + 0<sup>1</sup> + 1<sup>0</sup> = `5` <br />
+&nbsp;&nbsp;`101`value is equal to: 2<sup>2</sup> + 0<sup>1</sup> + 2<sup>0</sup> = `5` <br />
 
 ## Negative numbers
 Negative numbers are much more complicated to represent. Java uses [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement) representation.
@@ -123,7 +124,7 @@ If we add `1` to max integer value we will simply overflow to integer min value.
  10000000000000000000000000000000 = -2147483648 = Integer.MIN_VALUE
 ```
 
-If we subtract `1` from min integer value we will simply overflow to integer max value.
+If we subtract `1` from min integer value (in the example `add -1`) we will simply overflow to integer max value.
 ```
  10000000000000000000000000000000 = -2_147_483_648 = Integer.MIN_VALUE
 +11111111111111111111111111111111 = -1 
@@ -135,21 +136,27 @@ JVM will not throw any exception, it will simply execute the operation.
 
 # Unsigned operations
 Since java 1.8, there are static helper methods for `Long`, `Integer`, `Short` and `Byte`.
+
+## Conversion unsigned integers
+
+To convert unsigned number from `string` to `int` type, we can use: `Integer.parseUnsignedInt("4000000000", 10);`. 
+It will convert number 4 billion (that cannot fit into 31 bits), with radix `10`. 
+Internally it will be signed decimal `-294967296`, but unsigned: `4000000000`.
+Method `Integer.toUnsignedString(value)` converts binary representation to `string` and treat it as unsigned integer.
+
 Let's analyze the code belowe:
 ```java
-int value = -1;
+int value = Integer.parseUnsignedInt("4000000000", 10);
 System.out.println("decimal value = " + value);
 System.out.println("binary representation = " + Integer.toUnsignedString(value, 2));
 System.out.println("unsigned decimal representation = " + Integer.toUnsignedString(value));
 ```
 output:
 ```java
-decimal value = -1
-binary representation = 11111111111111111111111111111111
-unsigned decimal representation = 4294967295
+decimal value = -294967296
+binary representation = 11101110011010110010100000000000
+unsigned decimal representation = 4000000000
 ```
-We are taking decimal `-1`, that is represented in binary format as one's `11111111111111111111111111111111`.
-For unsigned integer it would be the biggest number possible: 2<sup>32</sup>-1 = 4_294_967_295 (minus one, because we need to one value for zero).
 
 ## Adding unsigned integers
 
