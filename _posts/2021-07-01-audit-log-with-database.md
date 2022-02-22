@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Audit log
+title: "Audit log"
 featured: false
 author: marek
 categories: log, sql 
