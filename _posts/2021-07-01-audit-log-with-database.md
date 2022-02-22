@@ -151,17 +151,10 @@ Let's see how `audit` table is structured:
 SELECT * FROM audit;
 ```
 
-
-| **change_date     ** | **before (hstore)** | **after (hstore)  ** |
-|-----|-----|-----|
-| 2022-02-21 17:10:19.845434+01 | "id"=>"4", "property_1"=>"value1", "property_2"=>"value2" | "id"=>"4", "property_1"=>"new_value", "property_2"=>"value2" |
-
-
-
-
 | change_date                    |  before (hstore)                                           | after (hstore)                                               |
 | ------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | 2022-02-21 17:10:19.845434+01  | "id"=>"4", "property_1"=>"value1", "property_2"=>"value2"  | "id"=>"4", "property_1"=>"new_value", "property_2"=>"value2" |
+
 
 Now, let's say we want to see only changes for `property_1` column: 
 ```SQL
@@ -169,6 +162,7 @@ SELECT (before -> 'property_1')::VARCHAR as property_1, after - before as diff
 FROM audit
 limit 1
 ```
+
 | property_1  | diff                      | 
 | ----------- | ------------------------- | 
 | value1      | "property_1"=>"new_value" |
