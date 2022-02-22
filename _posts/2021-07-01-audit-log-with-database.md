@@ -1,4 +1,17 @@
+---
+layout: post
+title: "Audit log
+featured: false
+author: marek
+categories: log, sql 
+type: post
+image: '/assets/2021-07-01-audit-log-with-database/logs.jpg'
+comments: false
+---
 
+<figure>
+  <img src="/assets/2021-07-01-audit-log-with-database/logs.jpg" alt="Audit logs" />
+</figure>
 # Introduction
 In this article I will present the idea of audit log and how can we implement in database level.
 
