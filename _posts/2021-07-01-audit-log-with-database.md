@@ -152,10 +152,10 @@ SELECT * FROM audit;
 ```
 
 
-| **var** | **let** | **const** |
+| **change_date     ** | **before (hstore)** | **after (hstore)  ** |
 |-----|-----|-----|
-| Declares a variable, optionally initializing it to a value. | Declares a block-scoped, local variable, optionally initializing it to a value. | Declares a block-scoped, read-only named constant. |
-| Variable declared by **`var`** must start with a letter, underscore ( _ ) or dollar sign ($) and can contain alphabetic, numeric, or underscore characters. | Variable declared by **`let`** must start with a letter, underscore ( _ ) or dollar sign ($) and can contain alphabetic, numeric, or underscore characters. | Variable declared by **`const`** must start with a letter, underscore ( _ ) or dollar sign ($) and can contain alphabetic, numeric, or underscore characters. |
+| 2022-02-21 17:10:19.845434+01 | "id"=>"4", "property_1"=>"value1", "property_2"=>"value2" | "id"=>"4", "property_1"=>"new_value", "property_2"=>"value2" |
+
 
 
 
