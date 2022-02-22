@@ -90,22 +90,21 @@ ALTER TABLE my_entity_AUD ADD CONSTRAINT fk_my_entity_AUD_REV foreign key (REV) 
 
 Every change will be logged as revision. 
 
-## The disadvantage of audit log on application level
-For me, the main disadvantage of audit log on application level is that it is on application-level ;-) 
-Naturally, it will not log the changes made directly from the database level. 
-Realistically, developers from time to time do some database changes, data migrations. 
-After such `manual changes`, we have no information in our audit log.
-
-The second disadvantage is less technical, more philosophical. For me, the audit log should be immutable. 
-If we use `hibernate-envers` and we change the table name, we need to write a migration script for the main table and audit the log table.
-This also can break some compliance rules.
-
 # Explicit audit log on application level
 If any the framework doesn't work for us, developers can decide to make an explicit implementation. In this case every audit log trail needs to be created "manually".
-In the application we need to create is 
 This way gives us the biggest flexible when and what do we want to log. For example, we can log access data operations. 
 Custom solutions come with the price of: implementation, testing and maintenance. This solution is for sure the most expensive.
 Additionally, this method doesn't track changes made from SQL console. 
+
+## The disadvantage of audit log on application level
+For me, the main disadvantage of audit log on application level is that it is on application-level ;-)
+Naturally, it will not log the changes made directly from the database level.
+Realistically, developers from time to time do some database changes, data migrations.
+After such `manual changes`, we have no information in our audit log.
+
+The second disadvantage is less technical, more philosophical. For me, the audit log should be immutable.
+If we use `hibernate-envers` and we change the table name, we need to write a migration script for the main table and audit the log table.
+This also can break some compliance rules.
 
 # Audit log on database level 
 In the book [The art of PostgreSQL](https://theartofpostgresql.com/) we can find a recommendation on how to create an audit log on the database level.
