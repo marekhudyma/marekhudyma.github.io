@@ -26,9 +26,9 @@ An audit log can be implemented in many ways. It can be just a log file or recor
 Usually, an `audit log` is easy to write but much harder to read and analyze. There are also many reasons why we want to have it, e.g.:
 
 * easy way of debugging the system. It is much easier to reproduce the bug by having data from the past.
-* to demonstrate compliance. If I make our audit logs immutable, we can demonstrate to auditors that the system works as intended.
+* to demonstrate compliance. If the audit logs immutable, we can demonstrate to auditors that the system works as intended.
 
-We also need to remember what is `not the audit log`. In my opinion audit log should not be analyzed by business analytics. 
+We also need to remember what is `not the purpose of audit log`. In my opinion audit log should not be analyzed by business analytics. 
 It would leak internal implementation, that can change over time.
 For this purpose we should share data in a different way, e.g. emitting business events.
 
@@ -88,11 +88,11 @@ Every change will be logged as revision.
 For me, the main disadvantage of audit log on application level is that it is on application-level ;-) 
 Naturally, it will not log the changes made directly from the database level. 
 Realistically, developers from time to time do some database changes, data migrations. 
-After such manual changes, we have no information in our audit log.
+After such `manual changes`, we have no information in our audit log.
 
 The second disadvantage is less technical, more philosophical. For me, the audit log should be immutable. 
 If we use `hibernate-envers` and we change the table name, we need to write a migration script for the main table and audit the log table.
-This can break some compliance rules.
+This also can break some compliance rules.
 
 # Audit log on database level 
 In the book [The art of PostgreSQL](https://theartofpostgresql.com/) we can find a recommendation on how to create an audit log on the database level.
@@ -150,6 +150,11 @@ Let's see how `audit` table is structured:
 ```
 SELECT * FROM audit;
 ```
+| AAAAAA                         | cccccc                | eeee                                                         |
+| ------------------------------ | --------------------- | ------------------------------------------------------------ |
+| BBBBBBB                        | ddddd                 | ffff                                                         |
+
+
 | change_date                    |  before (hstore)                                           | after (hstore)                                               |
 | ------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | 2022-02-21 17:10:19.845434+01  | "id"=>"4", "property_1"=>"value1", "property_2"=>"value2"  | "id"=>"4", "property_1"=>"new_value", "property_2"=>"value2" |
