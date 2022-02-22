@@ -167,7 +167,7 @@ limit 1
 | ----------- | ------------------------- | 
 | value1      | "property_1"=>"new_value" |
 
-
+<br />
 ## Audit log SQL implementation - pros and cons
 As we see in the example, we achieved basic use cases. All changes: made from SQL level and application level are audited in the database. 
 
