@@ -151,8 +151,6 @@ Let's see how `audit` table is structured:
 SELECT * FROM audit;
 ```
 | AAAAAA                         | cccccc                | eeee                                                         |
-
-| ------------------------------ | --------------------- | ------------------------------------------------------------ |
 | BBBBBBB                        | ddddd                 | ffff                                                         |
 
 
