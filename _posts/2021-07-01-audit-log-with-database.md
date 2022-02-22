@@ -12,9 +12,9 @@ comments: false
 <figure>
   <img src="/assets/2021-07-01-audit-log-with-database/logs.jpg" alt="Audit logs" />
 </figure>
-# Introduction
-In this article I will present the idea of audit log and how can we implement in database level.
 
+# Introduction
+In this article I will present the idea of audit log and how can we implement in the application and database level.
 # What is audit log 
 [Martin Fowler gives](https://martinfowler.com/eaaDev/AuditLog.html) a definition of audit log:
 ```
@@ -22,26 +22,28 @@ An audit log is the simplest, yet also one of the most effective forms of tracki
 The idea is that any time something significant happens you write some record indicating what happened and when it happened.
 ```
 
-Audit log can be implemented in many ways. It can be just log file or record in database. 
-Usually `audit log` is easy to write, but much harder to read and analyze. 
-There are also many reasons why we want to have it, e.g.:
-* easy way of debugging the system. It is much easier to reproduce the bug having data form the past. 
-* to demonstrate compliance. If me make our audit logs `immutable`, we can demonstrate auditors that system works as intended.
+An audit log can be implemented in many ways. It can be just a log file or record in the database.
+Usually, an `audit log` is easy to write but much harder to read and analyze. There are also many reasons why we want to have it, e.g.:
 
-We also need to remember what is not audit log. In my opinion `audit log should not be analyzed by business analytics`.
-It would leak internal implementation, that can change over time. For this purpose we should share data in a different way, e.g. emiiting busuess events. 
+* easy way of debugging the system. It is much easier to reproduce the bug by having data from the past.
+* to demonstrate compliance. If I make our audit logs immutable, we can demonstrate to auditors that the system works as intended.
 
-# Audit log on application level 
-In many applications audit logs are created on application side. 
-As an example I mention [Hibernate ORM Envers](https://hibernate.org/orm/envers/). 
+We also need to remember what is `not the audit log`. In my opinion audit log should not be analyzed by business analytics. 
+It would leak internal implementation, that can change over time.
+For this purpose we should share data in a different way, e.g. emitting business events.
+
+# Audit log on application level
+In many applications, audit logs are created on the application side. 
+As an example, I mention [Hibernate ORM Envers](https://hibernate.org/orm/envers/). 
 It allows auditing of all mappings defined by the JPA specification
 
-You can use it by: 
+You can use it by:
+
 * adding the `hibernate-envers` dependency to the project, 
 * using annotation `@Audited` on your entity or properties, 
-* making sure, that your entity uses immutable and unique identifiers.
+* make sure, that your entity uses immutable and unique identifiers.
 
-The example of entity can be presented as below:
+The example of an entity can be presented as below:
 ```java
 @Audited
 @Entity
@@ -82,21 +84,21 @@ ALTER TABLE my_entity_AUD ADD CONSTRAINT fk_my_entity_AUD_REV foreign key (REV) 
 
 Every change will be logged as revision. 
 
-## Disadvantage of audit log on application level
-For me the main disadvantage of audit log on application level is that it is on application level ;-)
-Naturally, it will not log the changes made directly from database level. 
+## The disadvantage of audit log on application level
+For me, the main disadvantage of audit log on application level is that it is on application-level ;-) 
+Naturally, it will not log the changes made directly from the database level. 
 Realistically, developers from time to time do some database changes, data migrations. 
-After such manual changes we have no information in our audit log. 
+After such manual changes, we have no information in our audit log.
 
-Second disadvantage is less technical, more philosophical. For me audit log should be immutable. 
-If we use `hibernate-envers` and we change table name, we need to write a migration script for main table and audit log table. 
-This can break some compliance rules. 
+The second disadvantage is less technical, more philosophical. For me, the audit log should be immutable. 
+If we use `hibernate-envers` and we change the table name, we need to write a migration script for the main table and audit the log table.
+This can break some compliance rules.
 
 # Audit log on database level 
-In the book [The art of postgreSQL](https://theartofpostgresql.com/) we can find a recommendation how to create audit log on database level. 
+In the book [The art of PostgreSQL](https://theartofpostgresql.com/) we can find a recommendation on how to create an audit log on the database level.
 
 ## hstore 
-Before we go farther, let's undestand [hstore](https://www.postgresqltutorial.com/postgresql-hstore/) field.
+Before we go further, let's understand [hstore](https://www.postgresqltutorial.com/postgresql-hstore/) field.
 `hstore data` type is for storing key-value pairs in a single value.
 
 To enable PostgreSQL `hstore extension` execute: 
@@ -119,7 +121,7 @@ CREATE TABLE audit (
   after HSTORE
 );
 ```
-Now, the function that will convert record to `HSTORE` format and insert in to `audit table`.
+Now, the function will convert the record to `HSTORE` format and insert it into the `audit table`.
 ```SQL
 CREATE FUNCTION audit() RETURNS TRIGGER LANGUAGE PLPGSQL 
 AS $$ 
@@ -135,7 +137,8 @@ Let's add the trigger for `my_entity` table.
 CREATE TRIGGER audit AFTER UPDATE ON my_entity FOR EACH ROW EXECUTE PROCEDURE audit();
 ```
 
-This trigger is dedicated to be used only for 1 table. We can modify the table by adding `table_name`, so all tables will write audit logs to one table and we will be able to distuingush them. 
+This trigger is dedicated to being used only for 1 table. We can modify the table by adding `table_name`, 
+so all tables will write audit logs to one table, and we will be able to distinguish them. 
 
 ## Testing
 Insert and update value:
@@ -147,8 +150,8 @@ Let's see how `audit` table is structured:
 ```
 SELECT * FROM audit;
 ```
-| change_date  |  before (hstore) | after (hstore) |
-| ------------- | ------------- | ------------- |
+| change_date                    |  before (hstore)                                           | after (hstore)                                               |
+| ------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------ |
 | 2022-02-21 17:10:19.845434+01  | "id"=>"4", "property_1"=>"value1", "property_2"=>"value2"  | "id"=>"4", "property_1"=>"new_value", "property_2"=>"value2" |
 
 Now, let's say we want to see only changes for `property_1` column: 
@@ -157,17 +160,17 @@ SELECT (before -> 'property_1')::VARCHAR as property_1, after - before as diff
 FROM audit
 limit 1
 ```
-| property_1  |  diff | 
-| ------------- | ------------- | 
-| value1  | "property_1"=>"new_value" |
+| property_1  | diff                      | 
+| ----------- | ------------------------- | 
+| value1      | "property_1"=>"new_value" |
 
 
-## Audit log SQL implementation - pro and cons 
+## Audit log SQL implementation - pros and cons
 As we see in the example, we achieved basic use cases. All changes: made from SQL level and application level are audited in the database. 
 
-As disadvantage I would point, that if we want to skip some field from audit log, our SQL code became more complicated. 
-As a backend developer I prefer to take the business logic out from database.
+As a disadvantage, I would point, out that if we want to skip some field from the audit log, our SQL code became more complicated. 
+As a backend developer, I prefer to take the business logic out of the database.
 
 # Summary 
-As always, every solution has it's own advantages and disadvantages. 
-I like to have SQL level audit log, because it fulfill busiess needs in most cases: easy to implement and keep changes done even via SQL console.
+As always, every solution has its own advantages and disadvantages. 
+I like to have SQL level audit log because it fulfills business needs in most cases: easy to implement and keep changes done even via SQL console.
