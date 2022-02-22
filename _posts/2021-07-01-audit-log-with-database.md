@@ -14,8 +14,11 @@ comments: false
 </figure>
 
 # Introduction
-In this article I will present the idea of audit log and how can we implement in the application and database level.
+In this article I will present the idea of audit log and how can we implement in the application and database level using Java and PostgreSQL. 
+
 # What is audit log 
+An audit log, also known as an audit trail, is a chronological set of records that provides documentary evidence.
+
 [Martin Fowler gives](https://martinfowler.com/eaaDev/AuditLog.html) a definition of audit log:
 ```
 An audit log is the simplest, yet also one of the most effective forms of tracking temporal information. 
@@ -25,14 +28,17 @@ The idea is that any time something significant happens you write some record in
 An audit log can be implemented in many ways. It can be just a log file or record in the database.
 Usually, an `audit log` is easy to write but much harder to read and analyze. There are also many reasons why we want to have it, e.g.:
 
-* easy way of debugging the system. It is much easier to reproduce the bug by having data from the past.
-* to demonstrate compliance. If the audit logs immutable, we can demonstrate to auditors that the system works as intended.
+* to `reconstruct events` that can be used for `intrusion detection`, and `problem analysis.`
+* to demonstrate compliance. Many regulations like, [GDPR](https://en.wikipedia.org/wiki/General_Data_Protection_Regulation), [PSD](https://en.wikipedia.org/wiki/Payment_Services_Directive) define requirements to have some version of audit log,
 
 We also need to remember what is `not the purpose of audit log`. In my opinion audit log should not be analyzed by business analytics. 
 It would leak internal implementation, that can change over time.
 For this purpose we should share data in a different way, e.g. emitting business events.
 
-# Audit log on application level
+From my personal experience I have a feeling that product requirements are not strictly defined about audit log. This can lead to misunderstanding what need to be implemented. 
+We need to answer detailed question: what do we want to track? how long to store data?
+
+# Audit log on application level - Hibernate 
 In many applications, audit logs are created on the application side. 
 As an example, I mention [Hibernate ORM Envers](https://hibernate.org/orm/envers/). 
 It allows auditing of all mappings defined by the JPA specification
@@ -93,6 +99,13 @@ After such `manual changes`, we have no information in our audit log.
 The second disadvantage is less technical, more philosophical. For me, the audit log should be immutable. 
 If we use `hibernate-envers` and we change the table name, we need to write a migration script for the main table and audit the log table.
 This also can break some compliance rules.
+
+# Explicit audit log on application level
+If any the framework doesn't work for us, developers can decide to make an explicit implementation. In this case every audit log trail needs to be created "manually".
+In the application we need to create is 
+This way gives us the biggest flexible when and what do we want to log. For example, we can log access data operations. 
+Custom solutions come with the price of: implementation, testing and maintenance. This solution is for sure the most expensive.
+Additionally, this method doesn't track changes made from SQL console. 
 
 # Audit log on database level 
 In the book [The art of PostgreSQL](https://theartofpostgresql.com/) we can find a recommendation on how to create an audit log on the database level.
@@ -168,12 +181,21 @@ limit 1
 | value1      | "property_1"=>"new_value" |
 
 <br />
+
 ## Audit log SQL implementation - pros and cons
 As we see in the example, we achieved basic use cases. All changes: made from SQL level and application level are audited in the database. 
 
 As a disadvantage, I would point, out that if we want to skip some field from the audit log, our SQL code became more complicated. 
 As a backend developer, I prefer to take the business logic out of the database.
 
+## Audit log risks 
+Audit logs may be very helpful in many situations, but it also provides some risks to the system, e.g.
+* It can grow too much. We need to ask ourselves: how long do we want to store data? What are business and technical requirements? 
+* It can be the source of `data leak`. If audit log is not properly secured, somebody can use it to get secret information.
+
 # Summary 
-As always, every solution has its own advantages and disadvantages. 
-I like to have SQL level audit log because it fulfills business needs in most cases: easy to implement and keep changes done even via SQL console.
+As always, every solution has its own advantages and disadvantages.
+The key is collection of clear requirements what we need. 
+Then we can choose solution that fit us the best. 
+
+Personally I like to have SQL level audit log because it fulfills business needs in most cases: easy to implement and keep changes done even via SQL console.
