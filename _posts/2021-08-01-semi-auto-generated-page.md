@@ -53,7 +53,7 @@ You can follow the process in the diagram below
 </figure>
 
 ## Manual configuration
-The big elephant in the room are manual intervention taken by human. The webpage is in the state, that I do not fully trust software decisions. Webpage crawling is implemented in pretty simple way. I just search for some keywords with version. 
+The big elephant in the room are manual interventions taken by human. The webpage is in the state, that I do not fully trust software decisions. Webpage crawling is implemented in pretty simple way. I just search for some keywords with version. 
 From the experience I realized that webpages and format of content are changing pretty often. I decided that on this stage I will notify myself when webpage changes. 
 I do manual configuration change of the page, so it can be regenerated. It doesn't take much time. 
 Maybe in the future the algorithm will be good enough to trust it. 
@@ -132,10 +132,10 @@ jobs:
         commit_message: 'Update html'
 ```
 ## GitHub token
-Your repository need to have right to push code (`HTML pages`) you need to somehow configure permissions to do it.
+Your repository with Java code needs to have permissions to push code (`HTML pages`) to second repository.
 In the GitHub actions configuration, in the plugin: `dmnemec/copy_file_to_another_repo_action@main`, I configured it to use my token: `API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_RELEASED_INFO_GITHUB }}`.
 You can generate a new token here: [https://github.com/settings/tokens](https://github.com/settings/tokens)
-and I configure it correctly. For me, it was selecting permissions: `repo` and `workflow`.
+and I configure it correctly. For me, it ware permissions: `repo` and `workflow`.
 
 # Static webpage
 A static repository placed in GitHub Pages serves a static webpage.
@@ -165,12 +165,13 @@ In the `settings` -> `pages` just:
 
 ## Subdomains 
 As I mention earlier, I would like to have many subdomains like `is.java.released.info`, `is.python.released.info`, etc. 
-For every subdomain I needed to create another CNAME `record`.
+For every subdomain I needed to create another `CNAME record`.
 <figure>
   <img src="/assets/2021-08-01-semi-auto-generated-page/namecheap_dns_configuration_subdomain.png" alt="Namecheap dns configuration for subdomain" />
 </figure>
 
 Additionally, I needed to create a separate GitHub repository for every domain.
+Namecheap allows to have 100 CNAME records.
 
 # Email sending via Gmail
 As I wrote earlier, I use email to notify myself about the changes in the system. I used it, because it was very easy to configure. 
@@ -186,8 +187,8 @@ To use it you need to set `MX Record` in your domain provider.
 
 # Disadvantages
 I am pretty satisfied how the solution works. Whereas, there are some disadvantages: 
-* From time to time, some manual action is required. Webpages are changing constantly. I think I some small human intervention will be still needed from time to time. 
-* Around once per quarter I have a problem that some subdomain stops to refresh the webpage. HTML is pushed to repository, but webpage is stale. I didn't use my free quote for minutes.. 
+* From time to time, some manual action is required. Webpages are changing constantly. I think some small human intervention will be still needed from time to time. 
+* Around once per quarter, I have a problem that some subdomain stops to refresh the webpage. HTML is pushed to repository, but webpage is stale. I didn't use my free quote for minutes... 
 In this case I simply delete the repository with HTML and recreate it. Then it works again.
 
 # Summary
