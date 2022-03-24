@@ -10,7 +10,7 @@ comments: false
 ---
 
 # Introduction 
-In this article I will describe, how I realized my small site project using `free` services and semi-auto generated pages. 
+In this article, I will describe, how I realized my small site project using `free` services and semi-auto generated pages. 
 
 # Problem description
 Some time ago I wanted to realize my tiny project: [Released.info](http://released.info) webpage, 
@@ -39,11 +39,11 @@ Additionally, GitHub Actions provide `2_000 minutes of free code execution` per 
 
 ## GitHub repositories
 I organized my code into two repositories: 
-* First repository contains Java code, which is doing some actions periodically and after the pull request is merged:
+* The first repository contains Java code, which is doing some actions periodically and after the pull request is merged:
     * crawl pages and determine whether the technology was released; if yes, send an email to myself, so I can validate it manually,
     * generate the webpage code (including updated counters),
     * push the static webpage to the second repository,
-* Second repository simply serves as a static webpage.
+* The second repository simply serves as a static webpage.
 
 You can follow the process in the diagram below
 <figure>
@@ -51,14 +51,14 @@ You can follow the process in the diagram below
 </figure>
 
 ## Manual configuration
-The big elephant in the room are the manual interventions taken by humans. 
+The big elephant in the room is the manual interventions taken by humans. 
 The webpage is in a state for which I do not fully trust software decisions. Webpage crawling is implemented in a pretty simple way. 
-I just search for some keywords with the version. From this experience I realized that webpages, and the format of content change pretty often. 
+I just search for some keywords with the version. From this experience, I realized that web pages and the format of content change pretty often. 
 I decided that for this stage I will notify myself when the webpage changes. I performed a manual configuration change of the page, so it can be regenerated. 
-It doesn't take much time. Maybe in the future the algorithm will be good enough to trust it.
+It doesn't take much time. Maybe in the future, the algorithm will be good enough to trust it.
 
 # Generation of a static webpage
-To generate static pages, I used an extremely easy method. Inside a test I put a code that generates a static webpage. 
+To generate static pages, I used an extremely easy method. Inside a test, I put a code that generates a static webpage. 
 Java code generates the webpage with [Thymeleaf](https://www.thymeleaf.org/) templating system.
 
 I will show only a small example of the HTML page with templates:
@@ -86,7 +86,7 @@ private static String generateHTMLPage(List<Configuration> configurations) {
 }
 ```
 The values for placeholders are passed here: `ct.setVariable("configurations", configurations);`.
-The generated HTML file I save on a disk to a temporary directory. These files are later pushed by GitHub Actions plugin to separate repository. 
+The generated HTML file I save on a disk to a temporary directory. These files are later pushed by GitHub Actions plugin to a separate repository. 
 
 # Github Action configuration
 
@@ -140,13 +140,13 @@ and I configure it correctly. For me, it was permissions: `repo` and `workflow`.
 A static repository placed in GitHub Pages serves a static webpage.
 It uses a [Content Delivery Network (CDN)](https://en.wikipedia.org/wiki/Content_delivery_network)
 It offers `HTTPS`, and it is very easy to point a domain to it.
-By default, your webpage is available by url: `https://<user>.github.io`.
+By default, your webpage is available by URL: `https://<user>.github.io`.
 
 # Domain configuration 
-I would like my page to be available under the url: `https://released.info` and I would like to make some other funny subdomains `https://is.java.released.info`. 
+I would like my page to be available under the URL: `https://released.info` and I would like to make some other funny subdomains `https://is.java.released.info`. 
 
 ## Namecheap configuration
-GitHub instruct users to point `A records` and to 4 GitHub DNS addresses.
+GitHub instructs users to point `A records` and to 4 GitHub DNS addresses.
 <figure>
   <img src="/assets/2021-08-01-semi-auto-generated-page/namecheap_dns_configuration.png" alt="Namecheap dns configuration" />
 </figure>
@@ -163,7 +163,7 @@ After DNS Namecheap configuration, we can configure the GitHub pages in the `set
 
 ## Subdomains 
 As I mentioned earlier, I would like to have many subdomains like this: `is.java.released.info`, `is.python.released.info`, etc. 
-For every subdomain I needed to create another `CNAME record`.
+For every subdomain, I needed to create another `CNAME record`.
 <figure>
   <img src="/assets/2021-08-01-semi-auto-generated-page/namecheap_dns_configuration_subdomain.png" alt="Namecheap dns configuration for subdomain" />
 </figure>
@@ -178,16 +178,17 @@ Generally [in your account](https://myaccount.google.com) go to `security` -> `S
 Later use it as a standard SMTP server. 
 
 # Receiving emails. 
-I decided that I would like my contact email to look professional: `contact@released.info`. I didn't want to spend much time to configure the SMTP server. 
+I decided that I would like my contact email to look professional: `contact@released.info`. I didn't want to spend much time configuring the SMTP server. 
 I just used a free `https://improvmx.com` service to redirect emails from `contact@released.info` to my personal email account. 
-So from outside it looks professional, whereas when I respond back, my personal email will be fully visible. Till now, I didn't need to respond to anybody ;-)
+So from outside, it looks professional, whereas when I respond back, my personal email will be fully visible. Till now, I didn't need to respond to anybody ;-)
 To use it you need to set an `MX Record` in your domain provider. 
 
 # Disadvantages
 I am pretty satisfied with how the solution works. However, there are some disadvantages: 
-* From time to time, some manual actions are required. The webpages are changing constantly. I think some small human intervention will still be needed from time to time. 
-* Around once per quarter, I have a problem where some subdomain stops, so I have to refresh the webpage. HTML is pushed to repository, but the webpage is stale. I didn't use my free quote for minutes... 
-In this case I simply delete the repository with HTML and recreate it. Then it works again.
+* From time to time, some manual actions are required. The web pages are changing constantly. I think some small human intervention will still be needed from time to time. 
+* Around once per quarter, I have a problem where some subdomain stops, so I have to refresh the webpage. HTML is pushed to the repository, but the webpage is stale. I didn't use my free quote for minutes... 
+In this case, I simply delete the repository with HTML and recreate it. Then it works again.
 
 # Summary
-In a described way I achieved a working solution that fulfilled my needs. Is free but offers good enough service.
+In a described way I achieved a working solution that fulfilled my needs.
+It is not perfect, but it works, it is free and offers good service.
