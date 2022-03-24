@@ -3,7 +3,7 @@ layout: post
 title: "Semi-auto generated page"
 featured: false
 author: marek
-categories: java, startup 
+categories: java startup 
 type: post
 image: '/assets/2021-08-01-semi-auto-generated-page/released-info.png'
 comments: false
