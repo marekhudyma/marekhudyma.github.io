@@ -19,3 +19,5 @@ od którego momentu możemy się podnieść (ile tracimy danych)
 RTO - czas, żeby podnieść cały system
 RTA - to wykonywanie procedur, przez developerów
 
+principalia oraz ciekawe prawa
+https://github.com/dwmkerr/hacker-laws#reading-lis

@@ -1,3 +1,9 @@
+https://qmo.io/blog/ultimate-guide-to-api-design
+
+
+
+
+
 ---
 layout: post
 title: "REST good practices"
