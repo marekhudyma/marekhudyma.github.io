@@ -119,5 +119,28 @@ public ResponseEntity<?> patch(@PathVariable UUID accountId,
 }
 </code></pre>
 
+# Database exceptions inside transaction
+
+There is an important issue with `Spring transactions`.
+Let's say there is a method annotated with the `@Transactional` annotation.
+Some repositories can throw an exception, e.g. `DataIntegrityViolationException`.
+Your code can catch it, but anyway, your whole transaction will be marked to be rolled back.
+
+```
+@Transactional 
+public void create(Account account) {
+    try {
+        accountRepository.saveAndFlush(account);
+    } catch (DataIntegrityViolationException ignore) {
+        // do nothing 
+    }
+    otherRepository.saveAndFlush(OtherEntity.builder()); // <-- exception
+}
+```
+In this situation the exception will be thrown: 
+```
+org.springframework.orm.jpa.JpaSystemException: could not execute statement; nested exception is org.hibernate.exception.GenericJDBCException: could not execute statement
+```
+
 # Summary
 In this article, I provided arguments an why the usage of business exceptions is bad and how it can be replaced with other code structures.
