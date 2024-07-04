@@ -152,4 +152,3 @@ In this article, we explored the surprising behavior of the equals (=) operator 
 We highlighted the potential risks associated with this behavior, such as issues with data integrity and correctness.
 By incorporating these validation strategies, you can effectively maintain data integrity and consistency, 
 preventing the unexpected behavior of the equals operator from causing significant issues in your database.
-
