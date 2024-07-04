@@ -117,9 +117,11 @@ In a Spring Boot application, you can add validation to the endpoints to achieve
 You may simply add a custom annotation to reject invalid requests. 
 
 ```Java
-public class NoTrailingSpaces implements ConstraintValidator<NoTrailingSpacesConstraint, String> {
+public class NoTrailingSpaces 
+    implements ConstraintValidator<NoTrailingSpacesConstraint, String> {
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(String value,
+                           ConstraintValidatorContext context) {
         return (value != null && !value.isEmpty() && value.equals(value.trim()));
     }
 }
@@ -137,7 +139,7 @@ public class MyEntity {
     @PostLoad
     public void validate() {
         if (id != null && !id.equals(id.trim())) {
-            throw new RuntimeException("Invalid data: Trailing spaces found in id");
+            throw new RuntimeException("Trailing spaces found in id");
         }
     }
    // other fields ... 
