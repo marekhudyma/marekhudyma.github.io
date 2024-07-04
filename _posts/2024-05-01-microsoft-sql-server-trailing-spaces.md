@@ -122,7 +122,9 @@ public class NoTrailingSpaces
     @Override
     public boolean isValid(String value,
                            ConstraintValidatorContext context) {
-        return (value != null && !value.isEmpty() && value.equals(value.trim()));
+        return (value != null 
+            && !value.isEmpty()
+            && value.equals(value.trim()));
     }
 }
 ```
